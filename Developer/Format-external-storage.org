@@ -1,0 +1,54 @@
+* No FAT, please.
+
+The file manager in Chrome OS can format external storage, but it uses FAT32, which doesn't support symbolic links and other features that Linux users want in file storage. Here's how to use Crouton CLI to format external storage to ext4.
+
+Change the specifics of this example to match your situation:
+  * /User/ - bfw
+  * /SD card/ - Samsung SDXC 64GB Class 10 UHS-1 
+  * /Device/ - mmcblk1
+  * /Partitions/ - none
+  * /File system type/ - ext4
+
+My SD card had a partition, but yours may not.
+
+#+BEGIN_SRC
+(xenial)bfw@localhost:~$ lsblk | grep mmcblk1
+mmcblk1       179:64   0 59.6G  0 disk 
+`-mmcblk1p1   179:65   0 59.6G  0 part /var/host/media/removable/CB3-131
+(xenial)bfw@localhost:~$
+#+END_SRC
+
+If the card is mounted, [[https://support.google.com/chromebook/forum/AAAAmKCdEusg5Oszh0pfLk?hl=en][Chrome OS unmount it]].
+
+#+BEGIN_SRC
+$ lsblk | grep mmcblk1
+mmcblk1       179:64   0 59.6G  0 disk 
+`-mmcblk1p1   179:65   0 59.6G  0 part 
+$
+#+END_SRC
+
+Wipe any partition table with dd and format.
+
+#+BEGIN_SRC
+$ sudo dd if=/dev/zero of=/dev/mmcblk1 bs=1M count=100
+...
+104857600 bytes (105 MB, 100 MiB) copied, 6.76475 s, 15.5 MB/s
+$ sudo mkfs.ext4 -L "Sam64GBext4" /dev/mmcblk1
+...
+$ sudo sync
+$ 
+#+END_SRC
+
+Physically eject and reinsert the SD card.
+
+Create directories and change permissions.
+
+#+BEGIN_SRC
+$ lsblk | grep mmcblk1
+mmcblk1       179:64   0 59.6G  0 disk /var/host/media/removable/Sam64GBext4
+$ cd /var/host/media/removable/Sam64GBext4
+$ sudo mkdir Downloads bfw
+$ sudo chmod a+rwx Downloads
+$ sudo chown bfw bfw; sudo chgrp bfw bfw
+$
+#+END_SRC

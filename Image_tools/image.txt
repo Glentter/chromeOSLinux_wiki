@@ -1,0 +1,1111 @@
+There is only 1 ubuntu release supported under Crouton, and this is xenial. All the older releases are end-of-life, and the newer ones are marked as not supported. Actually, xenial reached end-of-life on April 30 of this year. Nevertheless, it is still a powerful release, and works nearly perfectly with Crouton. About the only glitch is the thing which happens when a removable device is inserted while you're in the chroot: "Not allowed". However, the device can still be accessed after you clear the error by clicking OK.
+
+Also, there are several PPA's which can be used to upgrade or add to the existing software. I'm familiar with these media-related packages: smplayer, guvcview, simplescreenrecorder, handbrake, and kodi. There may be others. I may return and provide links for these at a later time.
+
+You can install bionic with a simple hack: look for a tutorial on here called "3 steps to install bionic beaver". Focal is easy to install, although cras doesn't get compiled until and unless you issue the update command in Crouton. You don't really need cras in focal, so just used alsamixer normally.
+
+I'm interested in the future of Crouton. We shall see...EDIT: This how-to has been updated to include more information and to be more helpful. Why bother to upgrade? Xenial is getting out of date. It used to have X-accel but seemingly no more, so I have to use x11 in mplayer. But in bionic, I can use xv. You may wish to consider installing Ubuntu's latest LTS, focal. I'm currently using it, it's great so far, and requires no special tricks to install.
+
+***
+
+
+If you attempt to install bionic beaver, you find yourself in a catch-22 situation. For example, consider the command,
+
+`sudo crouton -r bionic -t xfce`
+
+In this case, the crouton setup script will fail prior to creating the primary user. You cannot enter the chroot manually to fix the error, because the primary user has not been setup. Re-running the script will not work either. All you can do is to delete the chroot and start over. The problem seems to be the fact that the package **xserver-xorg-video-all** never gets installed, perhaps due to some subtle dependency issue in running debootstrap. Since crouton seems to use the same "pattern" for various releases, this would not seem to be a problem with crouton.
+
+The following trick will allow you to install bionic:
+
+1. Install a base system, as follows:
+
+   `sudo crouton -r bionic -t core,audio,cli-extra`
+
+2. Then, after creating the initial user and password, `sudo enter-chroot` and execute the following:
+
+   `sudo apt-get install xterm xinit`
+
+   The preceding command will install a minimal X11 subsystem, including the package xserver-xorg-video-all.
+
+3. Finally, finish your setup with something like,
+
+   `sudo crouton -n bionic -t x11,xorg,extension,keyboard,xfce -u`
+
+***
+
+Note that bionic uses the new libinput instead of the older synaptics, which means you may need to edit 
+
+`/usr/share/X11/xorg.conf.d/40-libinput.conf`
+
+to get the touchpad to use tap-to-click. Edit the file so the **touchpad** section looks like this:
+
+    Section "InputClass"
+            Identifier "libinput touchpad catchall"
+            MatchIsTouchpad "on"
+            MatchDevicePath "/dev/input/event*"
+            Driver "libinput"
+            Option "Tapping" "On"
+            Option "DisableWhileTyping" "On"
+    EndSection
+
+Save the file, exit the chroot, and try again.If you install the lxde target in xenial, launching with startlxde yields an annoying error: "No session for pid xxxx" where the x's represent a process-ID. Here are 5 work-arounds:
+
+1. Ignore the error. Wait until you see the black screen, then press Esc to view the error, and press Esc again. Sometimes you may see the error first, and you may have to click OK to continue. If you leave LXDE running most of the time, this could work for you. This is the recommended solution. The error is perfectly harmless. After clearing the error, everything works correctly.
+
+
+***
+
+
+2. Install the lxde target in trusty instead. Current versions of important programs like handbrake, guvcview,  openshot, and simplescreenrecorder are available from respected PPA's. You'll never face this error in trusty. Note that a mirror must be specified to perform the install, since Trusty has reached end-of-life. A list of ubuntu mirrors can be found at [https://launchpad.net/ubuntu/+archivemirrors](https://launchpad.net/ubuntu/+archivemirrors)
+
+
+***
+
+
+3. Go ahead and install lxde normally, but then create an .xinitrc file, which will look something like this:
+
+`xsetroot -solid teal &`
+
+`lxpanel --profile LXDE &`
+
+`exec openbox`
+
+(Author's note: the above was supposed to be a block of code, but indenting each line 4 spaces didn't work, it appeared as 1 line, so I had to put line breaks. You don't need line breaks in your own code.)
+
+Those of you who are familiar with openbox know that you don't need lxpanel to get menus: you can get those by right-clicking the desktop. However, you need to create a menu.xml file in your home directory, under .config/openbox:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    
+    <openbox_menu xmlns="http://openbox.org/"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://openbox.org/
+                    file:///usr/share/openbox/menu.xsd">
+
+    <menu id="root-menu" label="Openbox 3">
+      <item label="Terminal emulator">
+        <action name="Execute"><execute>x-terminal-emulator</execute></action>
+      </item>
+      <item label="Web browser">
+        <action name="Execute"><execute>x-www-browser</execute></action>
+      </item>
+      <!-- This requires the presence of the 'menu' package to work -->
+      <menu id="/Debian" />
+    
+      <menu execute="openbox-menu lxde-applications.menu" id="apps" label="Applications"/>
+    
+      <separator />
+      <menu id="client-list-menu" />
+      <separator />
+      <item label="ObConf">
+        <action name="Execute"><execute>obconf</execute></action>
+      </item>
+      <item label="Reconfigure">
+        <action name="Reconfigure" />
+      </item>
+      <item label="Restart">
+        <action name="Restart" />
+      </item>
+      <separator />
+      <item label="Exit">
+        <action name="Exit" />
+      </item>
+    </menu>
+    
+    </openbox_menu>
+
+The above only scratches the surface of what can be done using openbox and lxpanel. After I had installed menu, openbox-menu, and games-toys, I created the following .xinitrc:
+
+    croutonpowerd -i &
+    syndaemon -i 2 -K -d &
+    #pulseaudio --kill &
+    xscreensaver -no-splash &
+    xrandr --output eDP1 --brightness .75 &
+    xrdb .Xresources &
+    xsetroot -solid teal &
+    xfishtank -d &
+    xplanet -background 0x008080 -latitude 33.689 -longitude -86.6833 &
+    lxpanel --profile LXDE &
+    exec openbox
+
+At any rate, you get both openbox menus as well as lxpanel menus. Now, to launch your desktop, go:
+
+`sudo enter-chroot -b -n xenial xinit`
+
+You get to have your cake and eat it too! 
+
+NOTE#1: To exit openbox, right-click on the desktop and choose "exit".
+
+NOTE#2: This solution works quite well for debian stretch also; actually, for any distro!
+
+NOTE#3: Remember, this is not a true desktop environment. Copy & Paste between apps will not work, neither will the Crouton extension.
+
+
+***
+
+
+4. Install these 2 targets when setting up xenial: xfce and lxde (plus whatever else you wish, of course). The 1st time you launch startxfce4, accept the default configuration. Drag the top bar to the bottom, and make the short bottom bar vertical and drag to the right side of the screen, not too far above the main bar.
+
+Next, under settings, configure "Preferred Programs" and choose PCManFM as your file manager, and lxterminal as your default terminal.
+
+Last but not least, execute the following command:
+
+`openbox --replace & exit`
+
+Now exit the desktop, putting a checkmark in the "Save Session" box (if this is your first visit, it will already be checked). Next time you startxfce4, you'll be running openbox with xfce menus. It's really quite nice. I name my chroot xenial-xflx for this hybrid solution.
+
+
+
+***
+
+
+5. Someone on here has published a way to actually fix the LXDE problem, located here:
+
+[https://github.com/dnschneid/crouton/issues/2489](https://github.com/dnschneid/crouton/issues/2489)
+
+Scroll way down the screen to the entry posted by **d2cmath**. It appears somewhat complex, and I haven't tried it yet.
+
+~Thanks ~James1. `sudo crouton -r kali-rolling -t audio,core`
+
+2. `sudo enter-chroot -n kali-rolling`
+
+       a. sudo apt install curl
+
+       b. sudo curl -O "http://http.us.debian.org/debian/pool/main/x/xbindkeys/xbindkeys_1.8.6-1_amd64.deb"
+
+       c. sudo apt install ./xbindkeys*
+
+       d. exit
+
+3. `sudo crouton -r kali-rolling -t xfce -u`# kickoff
+To get this working, we will use three things:
+Passwordless SSH (and ssh server), Crostini, and Crouton.  
+# Crouton setup  
+Let's be admin, so `sudo` isn't nagging:
+```
+sudo su
+```
+
+First, port 80 needs to be open, install iptables to do so:
+```
+apt-get install iptables -y
+```
+
+To open the port every launch, use:
+```
+echo '/sbin/iptables -I INPUT -p tcp --dport 22 -j ACCEPT' >> /etc/rc.local
+```
+
+what does port 22 to do with 80?
+nothing## General info
+This page will explain how to build your own Chrome OS kernel and kernel modules. We are especially interested in the kernel modules as we can't use a different kernel with crouton.  
+When you build your own kernel modules, you are also able to build the kernel, so it could be of use for chrubuntu users. 
+
+In latest versions of Chrome OS, Google uses Git version as part of the kernel name (what used to be a simple `3.18.0` version is now `3.18.0-00000-xxxxxxxx`). Since kernel modules are compiled against a specific kernel version, it leaves no choice but to recompile the modules against each version of the OS's kernel every OS update.
+A wise choice would be to stay on the Stable channel, for much less frequent updates.
+
+Moreover, while this process can be done inside your chroot on the chromebook itself (tested on a precise with xfce), it would be wise to do this on a capable Linux machine since all the tools coupled with the repo can weigh a couple of GB, which will chock up an average chromebook. 
+
+
+## Building the kernel from source
+
+### Step 1 - Getting the tools
+
+Let's start up by ensuring all the required tools are properly installed:
+```
+$ sudo apt-get install git-core make kernel-package bc nano
+```
+### Step 2 - Finding out our kernel version
+Now we have to find out our kernel version.
+Fire up crosh using `Ctrl+Alt+T` and type in:
+```
+$ uname -r
+```
+**NOTE:** This command alone must be typed inside your chromebook machine. 
+
+### Step 3 - Cloning chrome-os repo
+**Note:** There are two git repos where the kernel sources can be found: [kernel](https://chromium.googlesource.com/chromiumos/third_party/kernel/) and [kernel-next](https://chromium.googlesource.com/chromiumos/third_party/kernel-next/), however mostly you will need the [kernel](https://chromium.googlesource.com/chromiumos/third_party/kernel/) repo.  
+
+Now we need to clone the Chrome OS repo to our machine. But before that, we need to understand on which branch we are.
+Branches can be identified by chromeos-**_version_** where version is your kernel version, which we found on the our last command.  
+**EXAMPLE:** HP chromebook 14 has kernel 3.8.11 so you would need to use the chromeos-3.8 branch.
+
+Cloning the kernel branch chromeos-3.8 to the current folder:
+```
+$ git clone https://chromium.googlesource.com/chromiumos/third_party/kernel -b chromeos-3.8
+```
+**NOTE:** This process should take quite some time. At least an hour on a typical internet connection.
+Also, make sure you have at least 10GB of free space on your hard-drive.
+ 
+### Step 4 - Optional: Checking-out to a specific vesion
+This step should be done in case you're building for a specific Git version (see note in introduction for more information). Otherwise, you can jump straight to Step 6.
+Let's say our kernel version from Step 1 was `3.18.0-00000-xxxxxxxx`. In this case, you'd want to checkout to your specific version using:
+```
+$ git checkout 00000-xxxxxxxx
+```
+**NOTE:** You replace `00000-xxxxxxxx` with your own numbers.
+
+### Step 5 - Optional: Removing `-dirty` flag
+Since we're not on the latest version anymore, a `-dirty` flag would be added to our kernel version, which is a bad thing, since it has to match exactly the kernel version on our chromebook.
+To get rid of this flag, we need to edit `scripts/setlocalversion`:
+```
+$ nano scripts/setlocalversion
+```
+Inside this file, look for the following If statement (located inside `scm_version()` function):
+```
+if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+	printf '%s' -dirty
+fi
+```
+Mark those 3 lines a comment by putting a `#` in the beginning of each line.
+
+### Step 6 - Optional: Getting our current config file
+You can obtain the current configuration file of Chrome OS by:
+```
+$ modprobe configs; zless /proc/config.gz
+$ cat /proc/config.gz | gunzip > ~/Downloads/base.config
+```
+**NOTE:** This step should be done from inside your chroot.
+Now we ended up with a file called `base.config` which contains all the current configuration of our kernel.
+This file should replace the current file on path `chromeos/config/base.config`.
+
+### Step 7 - Optional: Editing `base.config`
+#### Building extra kernel modules
+If you want to build extra modules that are in the kernel source but not enabled by default, you do so by editing the flag for those modules.
+There are basically 3 flags you should be aware of:
+
+ 1. `n` which stands for "No". Means this module will not be built.
+ 2. `y`which stands for "Yes". Means this module will be built **into the kernel**.
+ 3. `m` which stands for "Module". Means this module will be separated from the kernel.
+ 
+You will always want to choose "m" for a separate module so you can load and unload it.  
+
+**Example:** Let's say we want to build `binfmt_misc.ko`:
+```
+$ nano chromeos/config/base.config
+```
+Search for `CONFIG_BINFMT_MISC`. It should say:
+```
+# CONFIG_BINFMT_MISC is not set
+```
+Change it to:
+```
+CONFIG_BINFMT_MISC=m
+```
+Other modules you may want to consider enabling are `md5.ko (CONFIG_CRYPTO_MD5)`, `cifs.ko (CONFIG_CIFS)` and `autofs.ko (CONFIG_AUTOFS4_FS)`.
+
+#### Dealing with errors
+
+During the build process you may face various errors. Some of them will throw you out of the process, forcing you to deal with them one way or another, some will simply warn you but won't stop the process.
+
+A good way to ignore all those errors would be turning off the `ERROR_ON_WARNING` flag in `base.config`:
+```
+$ nano chromeos/config/base.config
+```
+Search for:
+```
+CONFIG_ERROR_ON_WARNING=y
+```
+Change it to: 
+```
+CONFIG_ERROR_ON_WARNING=n
+```
+ 
+### Step 7 - Optional: Cross compiling for arm
+When you are cross compiling for arm, you will need some additional steps.  
+
+First you will need a cross compiler. On my ubuntu 14.04 64 bit notebook I used "gcc-arm-linux-gnueabi"  
+```
+$ sudo apt-get install gcc-arm-linux-gnueabi
+```
+Now you only need to tell you will be cross compiling with arm-linux-gnueabi. You can do that by entering the following commands.  
+```
+$ export ARCH=arm
+$ export CROSS_COMPILE=arm-linux-gnueabi-
+```
+
+### Step 8 - Setting up our kernel config
+
+Now we need to prepare the config file in accordance to our "flavor".  More info on this can be found [on the chromium dev pages](http://dev.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-configuration).
+If you wish to build for an x86_64 chromebook, you should use the `chromeos-intel-pineview` flag. Otherwise, you should consult with the website mentioned above.
+```
+$ ./chromeos/scripts/prepareconfig chromeos-intel-pineview
+```
+An example for setting a config for an arm chromebook device:
+```
+$ ./chromeos/scripts/prepareconfig chromeos-exynos5
+```
+
+### Step 9 - Make it happen
+Now, let's prepare everything:
+```
+$ make oldconfig
+```
+**Note:** If you enabled modules on Step 7, you may be asked to set additional config options needed for the module.  Most of the time it will be good to just leave them at the default. Which means just pressing `Enter` at the input field.
+
+Now you are all set to build the kernel and kernel modules. Make sure you're in the dictionary of your kernel source. 
+Here you can take the short way, and compile only the modules themselves (in most cases that's what you'd want to do):
+**Note:** You must know the exact path of your module folder. In this case, we're building the CIFS module, which nests in a folder called `fs`. 
+```
+$ make prepare
+$ make M=fs/cifs
+```
+In case you want to compile the whole kernel, you should simply do:
+```
+$ make
+```
+Go get some coffee, this will take some time. You can speed up the build by using `-j \<job numbers\>`. On a i7 12Gb ram you may use  `-j 16` with no issues. However there can sometimes be some problems with parallel jobs, so if you get errors then try first without `-j`.
+
+#### Common errors
+
+ - While running `make oldconfig` you get an error such as: `drivers/net/Kconfig:6:warning: environment variable WIFIVERSION undefined`. If you're just building modules, you may go ahead and ignore this error, as it won't affect the outcome.
+ -  If you encounter an error like `error: unrecognized command line option ‘-fstack-protector-strong’`, then you should edit your make file:
+`$ nano ./Makefile`
+ Then you need to find and replace the string `-fstack-protector-strong` with `-fstack-protector-all`.
+It should look something similar to this:
+```
+ifdef CONFIG_CC_STACKPROTECTOR_STRONG
+	stackp-flag := -fstack-protector-all
+	ifeq ($(call cc-option, $(stackp-flag)),)
+		$(warning Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: \
+			-fstack-protector-all not supported by compiler)
+```
+
+### Step 10 - Optional: Find your modules
+When it is finished without errors, you can list the build modules (in this case, binfmt_misc.ko) with:
+```
+$ find ./ -name *.ko | grep binfmt
+./fs/binfmt_misc.ko
+```
+### Step 11 - Optional: Starting over
+Google releases a new version of Chrome OS on Stable channel every 3 weeks or so. That means, in order to keep your modules working, you have to recompile them every new OS update. That's very frustrating, but that's how Google decided Chrome OS kernel to be (see introduction for more details).
+
+In order to simply start over after an **unsuccessful compile** without changing to a different branch, you can simply run:
+```
+$ make clean
+```
+To reset your local source code to be up to date with Google's changes, you simply run:
+```
+$ git reset --hard origin/chromeos-3.18
+```
+**Note:** Mind your kernel version. (in the example above: 3.18)
+And then start again from Step 2 (skip Step 3, as we already have the repository cloned).
+
+## Unmount /lib/modules on enter chroot
+
+**Note:** This step is only needed when you want to install the modules in /lib/modules. If not then you can skip this and go to [Enable loading of kernel modules](https://github.com/dnschneid/crouton/wiki/Build-chrome-os-kernel-and-kernel-modules#wiki-enable-loading-of-kernel-modules).  
+We need to unmount /lib/modules which is bind mounted in enter-chroot.   
+This can be done in rc.local.
+
+Create the following /etc/rc.local or add this to your /etc/rc.local if you already have one. 
+
+```bash
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# unmount bindmounts /lib/modules from enter-chroot
+for m in `cat /proc/mounts | /usr/bin/cut -d ' ' -f2 | grep /lib/modules| grep -v "^/$" `; do
+        umount "$m"
+done
+echo 0
+```
+
+Also be sure to change the execution bit 
+```
+$ sudo chmod +x /etc/rc.local
+```
+You can now logout and login again in your chroot to see if the script rc.local works.  
+If all is well, everything in /lib/modules is unmounted.  
+You can check this with the following.
+```
+$ cat /proc/mounts | grep /lib/modules
+```
+
+## Installing build modules in /lib/modules/\<kernel version\>
+
+```
+$ sudo make modules_install
+$ sudo depmod -a
+```
+This will install all modules in INSTALL_MOD_PATH which is by default / .  
+When you want to install it in a different path, to copy it to another chroot then change the INSTALL_MOD_PATH variable as follows.  
+As an example we use "tmp" directory in our kernel source directory.
+```
+$ export INSTALL_MOD_PATH="./tmp"
+$ make modules_install
+```
+
+## Enable loading of kernel modules.
+
+To be able to load modules we need to disable ``module_locking``, you can follow the procedure described in [[Enable kernel VT_x for Virtualbox]] that covers this as well.
+I also created a script [change-kernel-flags](https://github.com/divx118/crouton-packages/blob/master/change-kernel-flags) to do this that can be found on [divx118/crouton-packages](https://github.com/divx118/crouton-packages/blob/master/README.md).
+
+Now load your module for example binfmt_misc.ko in the source tree.
+```
+$ sudo insmod ./fs/binfmt_misc.ko
+```## General info
+**NOTE:** The originator of this Howto is no longer supporting it. Due to changes in the ChromeOS kernel source handling, it is no longer generally possible to compile the Virtualbox module for ChromeOS. Instead, the originator recommends dual-booting the Chromebook into "native" non-ChromeOS Linux and running VirtualBox under a standard kernel. See [This comment on issue 45](https://github.com/divx118/crouton-packages/issues/45#issuecomment-281434222).
+
+This guide is tested on:  
+HP chromebook 14 (Celeron 2955U)  
+Acer c720 (i3-4005U)  
+Acer R11 CB5-132T-C1LK
+
+However, it should work for any x86 chromebook. Just be sure you clone the right kernel source for your device.
+
+For installing virtualbox we need a kernel headers package to compile the virtualbox modules. However there are no kernel headers available to install that work with the kernel of your chromebook. That is why we need to build our own. In the section below we explain how you can boxodo that.   
+
+**NOTE:** If you are just interested in installing kernel headers and virtualbox you can go and read this [README.md](https://github.com/divx118/crouton-packages/blob/master/README.md) It is a ppa with most of the kernel versions and architectures for chromebooks. **You can post any problems by creating a** [new issue on divx118/crouton-packages git](https://github.com/divx118/crouton-packages/issues/new)
+
+
+## Getting the kernel source
+
+There are two git repos [kernel](https://chromium.googlesource.com/chromiumos/third_party/kernel/) and [kernel-next](https://chromium.googlesource.com/chromiumos/third_party/kernel-next/) where the kernel sources can be found, but you have to know which branch you're on. Branches can be identified by chromeos-**_version_** where version is your kernel version.  
+**NOTE:** Mostly you will need the [kernel](https://chromium.googlesource.com/chromiumos/third_party/kernel/) repo.  
+On the HP chromebook 14 I have kernel 3.8.11 so I need the chromeos-3.8 branch in the [kernel repo](https://chromium.googlesource.com/chromiumos/third_party/kernel/).
+
+Determining the appropriate branch may not be as straightforward as chromeos-[kernel version] but you should probably still start there. Take a look at [Issue 3342](https://github.com/dnschneid/crouton/issues/3342) for tips on finding the right branch. Also, [Issue 2642](https://github.com/dnschneid/crouton/issues/2642) contains a post with a [script](https://github.com/dnschneid/crouton/files/366435/git-rewind.zip) to help automate finding the right commit in the branch.
+
+First we need some tools installed in our chroot. I did this on a precise with xfce chroot, but it should also work on others.
+
+**Note:** All the shell commands on this page need to be done in the shell of your chroot if not specified otherwise.
+
+```
+$ sudo apt-get install git-core make kernel-package bc
+```
+Next, we need to determine the version of the kernel we're currently running.
+
+```
+$ uname -r
+```
+
+Then clone the kernel branch chromeos-[version] to our home folder.
+
+```
+$ cd ~
+$ git clone https://chromium.googlesource.com/chromiumos/third_party/kernel -b chromeos-[version]
+```
+
+For example, [version] may be 3.18 or some other value; see the value returned by uname above to determine this.  Then we may need to download the correct revision of the kernel source from the git repository, if the downloaded source version doesn't match that of what we're currently running, by rolling back to a previous commit.  First, determine the kernel version for the source we just downloaded:
+
+```
+$ cd kernel
+$ ./chromeos/scripts/prepareconfig chromeos-intel-pineview
+$ make oldconfig
+$ make kernelrelease
+```
+
+If the version from the uname command above does not match what is displayed, and is indeed a later version, then one can do the following to download an earlier version:
+
+```
+$ git reset --hard origin/chromeos-3.18
+$ git checkout HEAD~[number of commits prior to current version]
+$ ./chromeos/scripts/prepareconfig chromeos-intel-pineview
+$ make oldconfig
+$ make kernelrelease
+```
+
+One may need to repeat the above steps a number of times, each time increasing the commit number in brackets, to get back to the appropriate version of the kernel source, and some trial and error may be needed to find your matching version.
+
+Because we're not building the latest version of the source in the git repository, building a package from an older version will result in a package and installed version appended with "-dirty".  This can cause problems when building the Virtualbox modules later.  The simplest way to prevent this is to make a quick edit to script scripts/setlocalversion.  Search for text "-dirty" and remark out the "case" and "if" structures that append the text "-dirty".
+
+Before we start building we need to setup our kernel config. More info can be found [on the chromium dev pages](http://dev.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-configuration)
+
+First I had to run with -Werror, because I got one small problem when building some wifi module. This could be a problem with the gcc compiler I used.  
+Just use your favorite text editor and edit "chromeos/config/base.config" in the kernel dir.
+
+```
+$ cd kernel
+$ vi chromeos/config/base.config
+```
+
+Search for CONFIG_ERROR_ON_WARNING=y and make it CONFIG_ERROR_ON_WARNING=n
+
+Look at which flavor you need for your chromebook. We have x86_64 so we setup the config for chromeos-intel-pineview.  
+More info on which flavor to choose see the kernel config info site mentioned above.
+
+Before proceeding, don't forget to modify the script scripts/setlocalversion to remove the conditionals that append the text "-dirty" to the kernel version and package name; see above.
+
+```
+$ ./chromeos/scripts/prepareconfig chromeos-intel-pineview
+$ make oldconfig
+```
+
+> To build the kernel on a Chromebook Pixel 2 with a 3.14 Kernel gcc 4.9 was required.  If you get this error trying to build, this may be the cause:
+
+```
+ gcc: error: unrecognized command line option ‘-fstack-protector-strong’
+```
+
+For an Ubuntu Trusty chroot, the following will upgrade to gcc 4.9:
+
+```
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+# if command fails with add-apt-repository command not found then sudo apt-get install software-properties-common
+sudo apt-get update
+sudo apt-get install g++-4.9
+# delete link to old gcc version
+sudo rm /usr/bin/gcc
+# link to new gcc version
+sudo ln -s /usr/bin/gcc-4.9 /usr/bin/gcc
+```
+
+## Building kernel headers and kernel image
+
+Now we can start building kernel_headers and kernel_image. Note that this will take some time.
+
+```
+$ make-kpkg --rootcmd fakeroot kernel_image kernel_headers
+```
+
+> This failed with the following error when building 3.14 kernel:
+
+```
+cannot create /etc/apt/apt.conf.d//01autoremove-kernels.dpkg-new: Permission denied
+```
+
+Which was solved by running the make as __sudo__.
+
+After it is finished without errors you should now see two *.deb files in the directory above kernel. If you followed this guide to the letter it should be your home dir.
+
+```
+$ ls -al ~ | grep .deb
+-rw-r--r--  1 root    root    8340026 Dec 27 18:08 linux-headers-3.8.11_3.8.11-10.00.Custom_amd64.deb
+-rw-r--r--  1 root    root    7656850 Dec 27 18:07 linux-image-3.8.11_3.8.11-10.00.Custom_amd64.deb
+```
+
+**DO NOT INSTALL THE .deb PACKAGES NOW!!!** Please follow the steps and unmount your /lib/modules first!
+Otherwise, you have the risk of overwriting Chrome OS kernel modules causing Chrome OS won't boot and you'll have to do a SD card or USB recovery. In that case, YOUR DATA WILL BE LOST!
+
+## Installing kernel headers/image
+
+Before we can install we need to umount /lib/modules which is bind mounted in enter-chroot.  
+We also need to disable module_locking for loading the vboxdrv kernel modules and actually load the modules.  
+Loading the modules can be done in rc.local. For disable module_locking we need to change the kernel flags. See [Repack-kernel-to-Enable-VT_x-for-Virtualbox](https://github.com/dnschneid/crouton/wiki/Repack-kernel-to-Enable-VT_x-for-Virtualbox).  
+I also created a script [change-kernel-flags](https://github.com/divx118/crouton-packages/blob/master/change-kernel-flags) to do this that can be found on [divx118/crouton-packages](https://github.com/divx118/crouton-packages/blob/master/README.md).
+ 
+
+Create the following /etc/rc.local or add this to your /etc/rc.local if you already have one. 
+
+```bash
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# umount bindmounts /lib/modules from enter-chroot
+for m in `cat /proc/mounts | /usr/bin/cut -d ' ' -f2 | grep /lib/modules| grep -v "^/$" `; do
+        umount "$m"
+done
+# try to load vboxdrv modules
+if [ `find /lib/modules/"\`uname -r\`" -name vboxdrv.ko` ]; then
+    # check if module_locking is disabled
+    if ! grep -q "module_locking=0" /proc/cmdline; then
+        exit 2
+    fi
+    modprobe vboxdrv
+    modprobe vboxpci
+    modprobe vboxnetadp
+    modprobe vboxnetflt
+fi
+
+exit 0
+```
+Also be sure to change the execution bit 
+```
+$ sudo chmod +x /etc/rc.local
+```
+
+You can now logout and login again in your chroot to see if the script rc.local works.  
+If all is well, everything in /lib/modules is umounted so we can install our two deb files.  
+You can check this with the following.
+```
+$ cat /proc/mounts | grep /lib/modules
+```
+
+Only if you build the kernel headers yourself install them by running dpkg
+```
+sudo dpkg -i linux-image-3.8.11_3.8.11-10.00.Custom_amd64.deb
+sudo dpkg -i linux-headers-3.8.11_3.8.11-10.00.Custom_amd64.deb
+```
+
+Now you can [download virtualbox](https://www.virtualbox.org/wiki/Linux_Downloads) and install it.
+After installing, logout of your chroot and log back in. Virtualbox drivers should now be loaded. You can check it by looking at lsmod or cat /proc/modules.
+**Note:** If you don't download virtualbox from the site, but install it from ubuntu repo with apt, then you will be missing the /etc/init.d/vboxdrv script.  
+**Note:** The vboxdrv will stay loaded when you log out of your chroot.  
+You can unload it before logging out with
+
+```
+$ sudo /etc/init.d/vboxdrv stop
+```
+Or in a chronos shell
+
+```
+$ sudo /sbin/rmmod vboxpci
+$ sudo /sbin/rmmod vboxnetadp
+$ sudo /sbin/rmmod vboxnetflt
+$ sudo /sbin/rmmod vboxdrv
+```
+
+
+
+## Build Essential
+In order to build a package from source you must first have the build-essential package installed:
+`sudo apt-get install build-essential`
+
+## Build Dependencies
+Before building a package you will need all the dependencies. First you will need to change directories to where you want the completed build files to go, in most cases you'll want to create a new directory.
+
+`mkdir ~/{package-name}`
+
+`cd ~/{package-name}`
+
+You then run the command to pull the dependencies from apt-get:
+
+`sudo apt-get build-dep {package-name}`
+
+## Build package from source
+
+Run the command to build the package from source:
+
+`sudo apt-get source --compile {package-name}`
+
+### Note:
+If this step fails due to an error with OpenJDK see the page on [Installing Oracle JDK](https://github.com/dnschneid/crouton/wiki/Installing-Oracle-JDK) and then retry.
+
+## Install the package
+At this point in time you should see a bunch of *.deb files for the package you want to install and all of the dependencies. Use the following command to install all of them:
+`sudo dpkg -iR ~/{package-name}`
+
+### Note:
+If you see an error at this point that the dependencies are broken or not met type the following command to fix dependencies:
+`sudo apt-get -f install`
+
+Fixing the dependencies should complete the install.
+
+## Footnote:
+This should work for most packages.If you run into issues try posting your problem on the [Google+ Crouton Users - Issues and Problems](https://plus.google.com/communities/109120069102230291151/stream/ce07a950-06cb-457e-bf34-de090784cba5) page.[VT_x](http://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) is a virtualization technology that comes in handy for example in case you want to run [VirtualBox](https://www.virtualbox.org/).
+
+1. commands described here need to be executed in a ``crosh`` root shell (use ``sudo su`` to become root)
+2. after a ChromeOS update you will need to do this again
+3. instead of ``/dev/sda``, your Chromebook storage might instead be ``/dev/mmcblk0``, use this accordingly
+
+To fully repack a kernel, see [[Repacking a kernel]].
+
+Foreword on kernels
+===================
+For more information about ChromeOS partitions see [chromiumos-design-docs/disk-format](http://www.chromium.org/chromium-os/chromiumos-design-docs/disk-format).
+
+In short, kernels are stored in partitions and have an associated priority which is a number between 0 and 15, where 0 means kernel is not bootable; a higher number corresponds to a higher boot priority.
+The kernel with the highest priority will be booted first and in case of non-signed kernel or failure the next one will be picked up. If no valid kernels are available, you will need to reinstall ChromeOS (or if you can boot from USB you can restore a valid kernel that way).
+
+Enabling VT_x
+=============
+
+In order to enable VT_x we will modify the configuration of the currently highest priority kernel; this will be possible only if verified boot is disabled:
+```
+$ crossystem dev_boot_signed_only=0
+```
+
+**NOTE**: ALSO SET THE BELOW ELSE CROUTON WILL SET dev_boot_signed_only to 1 again.
+```
+$ crossystem dev_boot_usb=1 dev_boot_legacy=1
+```
+
+Before proceeding it is necessary to know which kernel partition will be used at boot.
+
+Identify partition number:
+```
+$ cgpt show /dev/sda -qn | grep 'FE3A2A5D-4F32-41A7-B725-ACCC3285A309$' | awk '{ print $3 }'
+2
+4
+6
+$ 
+```
+These are the partition numbers of potentially bootable kernels; identify their priority with:
+```
+$ for N in `cgpt show /dev/sda -qn | grep 'FE3A2A5D-4F32-41A7-B725-ACCC3285A309$' | awk '{ print $3 }'`; do echo -n "Partition $N has priority "; cgpt show /dev/sda -i $N -P; done | sort -r -k5
+Partition 4 has priority 2
+Partition 2 has priority 1
+Partition 6 has priority 0
+$
+```
+
+**NOTE:** if you get GPT_ERROR_INVALID_HEADERS errors then you need to reboot, this is probably your first boot
+
+Let's say our kernel with the highest priority will be kernel B on partition 4; if yours is different then replace the ``$P`` in the next example commands with your specific value.
+```
+export P=4 ## partition number of the highest priority kernel
+```
+
+Save the config of kernel B which is on partition $P:
+```
+$ /usr/share/vboot/bin/make_dev_ssd.sh --save_config /tmp/kconfig --partitions $P
+Saving Kernel B config to /tmp/kconfig.4
+(Kernels have not been resigned.)
+$
+```
+The file ``/tmp/kconfig.4`` can be edited to add `disablevmx=off` to enable VT_x; if you also want to disable module_locking so you are able to load modules outside the rootfs you need to also add `lsm.module_locking=0`.
+
+Once your changes to the kernel config file are complete it can be set on the kernel partition with:
+```
+$ /usr/share/vboot/bin/make_dev_ssd.sh --set_config /tmp/kconfig --partitions $P
+Kernel B: Replaced config from /tmp/kconfig.4
+Backup of Kernel B is stored in: /mnt/stateful_partition/backups/kernel_A_20150208_223837.bin
+Kernel B: Re-signed with developer keys successfully.
+Successfully re-signed 1 of 1 kernel(s)  on device /dev/sda.
+```
+
+At this point you're finished; provided that you have disabled verified boot as per first step, you can boot the new kernel.## Just a simple tutorial to install A Chroot environment to USB or SD card
+
+* Step 1 - Format SD/USB 
+
+Open up ¨Crosh¨ by pressing ctrl+alt+t. (durr)
+
+`crosh> shell`
+
+`chronos@localhost / $ sudo su`
+
+`# fdisk -l`
+
+`...`
+
+`# umount /dev/sdb1` or unmount your removable media in the GUI.
+
+`# mkfs -t ext4 /dev/sdb1`
+
+**NOTE: replace `/dev/sdb1` with the listed name of the external drive. **
+
+The system will automatically rename your sd card to: _**SD Card**_
+
+**NOTE: If you are using a usb drive the system will rename your usb drive to _**USB Drive**_.**
+
+You can also use this resource to help you as well. (This way is harder and more complex.)
+[https://github.com/dnschneid/crouton/wiki/Format-external-storage](https://github.com/dnschneid/crouton/wiki/Format-external-storage)
+
+* Step 2 - Super Simple
+
+Unplug and plug back in your removable storage.
+
+* Step 3 - Installation
+
+Download a fresh installer from: https://goo.gl/fd3zc  
+`sudo install -Dt /usr/local/bin -m 755 ~/Downloads/crouton`  
+`sudo crouton -t ENVIRONMENT, xiwi -p '/media/removable/SD Card'`
+
+Replace `ENVIRONMENT` with the desktop environment that  you wish to install. If you wish to install crouton without the Web Store attachment, just take out `xiwi,` when installing.
+
+**NOTE:** If at any point it outputs something along the lines of: `/media/removable/SD/... is not a valid prefix` Then you need to add a backslash after **_SD_** in **_SD CARD_** This is to tell the computer that there is a space and not just the end of the folder name.   Ex: `/media/removable/SD\ Card/...`
+
+
+* Step 4 - How To Run External Chroot
+
+`cd /media/removable/SD\ Card/bin`
+
+`sudo sh startunity`
+
+### HELP! It died and I need to clear the carcass.
+
+`sudo rm -r '/media/removable/SD Card/chroots/DISTRO'`
+
+ Replace DISTRO with whatever name of installation (wheezy, jessie, stretch, buster, sid, Kali-Rolling, trusty, and xenial.) NOTE: there are other versions however, they may require extra effort to get them working.
+
+
+***
+* Tip
+
+Some external media will disappear after system suspend, prevent that by disabling power management or installing [Keep Awake](https://chrome.google.com/webstore/detail/keep-awake/bijihlabcfdnabacffofojgmehjdielb)### Issue:
+You click on Ubuntu Software Center, and try to install applications from there but the applications **donot** get installed.
+
+### Resolution:
+Try one of these:
+* gksu software-center or
+* gksu gnome-software
+
+ ## Browsing smb shares in a chroot
+
+**UPDATE:** ChromeOS 73+ supports FUSE, so using 
+```
+$ gvfs-mount smb://servername/sharename$
+```
+in an Ubuntu chroot should work without issues (as tested on a chroot running Bionic). You will get prompted interactively for username, domain/workspace (if applicable), and password; use the -a option if you must authenticate anonymously. Your mount should appear in ~/.gvfs/, though you may need gvfs-bin and gvfs-fuse installed for it to appear; also note that even though _gvfs-mount_ is deprecated in favor of _gio mount_, the syntax is interchangeable. Consider this method before compiling your own CIFS kernel modules.
+
+**Note:** if `gio mount smb://servername/sharename` return spurious "volume doesn’t implement mount" error, try 
+```
+$ dbus-launch bash
+```
+first, then issue the `gio mount smb://servername/sharename` command from the new bash command line.
+
+**Note:** This should work on a standard chroot with no additional smb packages installed.  
+Mounting smb shares in a chroot is easy. It can be done with browsing with for example file manager "pcmanfm". On LXDE this is the default file manager on xfce we have thunar.
+Thunar gave me an error: `Failed to open "/ on ".` Still have to do research on what the problem is.
+Unity/gnome/kde needs to be tested.  
+ 
+Therefor on xfce we also install pcmanfm with:
+```
+$ sudo apt-get install pcmanfm
+```
+Then one problem still exists when you want to browse to your network drives you will have to open some ports of the chromeos firewall. See http://terokarvinen.com/linux/doc/samba-quickstart.html bottom of the page.
+So open a crosh shell ctrl-alt-t and type shell.  
+**Note:** You need to replace the ip address (10.0.0.1) with the one from your local lan.  
+**Note:** On a reboot the iptables are reset to default, so you will need to reapply it when rebooted.
+
+```
+crosh> shell
+chronos@localhost / $ sudo iptables -I INPUT 1 -p udp --source 10.0.0.1/255.255.255.0 --dport 1025:65535 -j ACCEPT
+chronos@localhost / $ 
+```
+
+## Browsing smb shares in the File app from chrome
+
+1. Chrome OS has a native SMB file share "mount" utility built into the Files app as of v71+. (The term mount is used loosely here, as no actual mounting appears to be done; at least, Chrome OS seems to show files opened from an SMB share as an encoded SMB share URL of sorts with the externalfile: URI scheme as opposed to file:/// for Google Drive files.)
+
+2. Install [Network File Share for Chrome OS]( https://chrome.google.com/webstore/detail/network-file-share-for-ch/ndjpildffkeodjdaeebdhnncfhopkajk) app from the webstore. Source can be found [https://github.com/GoogleChrome/chromeos_network_file_share](https://github.com/GoogleChrome/chromeos_network_file_share)
+**Note:** These mounts will only show in the File app in chromeos and not in your chroot. Slow file transfer.
+
+3. Install [File System for Windows](https://chrome.google.com/webstore/detail/file-system-for-windows/mfhnnfciefdpolbelmfkpmhhmlkehbdf?utm_source=chrome-app-launcher-search) app from the webstore. Source can be found [https://github.com/yoichiro/chromeos-filesystem-cifs](https://github.com/yoichiro/chromeos-filesystem-cifs).  
+**Note:** These mounts will only show in the File app in chromeos and not in your chroot. Slow file transfer.
+
+4. Another way to mount smb shares on your chromebook can be found [https://github.com/divx118/cifs/blob/master/README.md](https://github.com/divx118/cifs/blob/master/README.md). This method uses cifs kernel module and doesn't need to have a chroot setup.  
+**Note:** These shares will turn up in the chroot. Fast file transfer.
+
+## Mounting network shares with autofs
+
+**Note:** The following is tested on a standard chroot ubuntu precise and trusty.
+For autofs to get working we need a module for our kernel. This can be built following the wiki page [Build chrome os kernel and kernel modules](https://github.com/dnschneid/crouton/wiki/Build-chrome-os-kernel-and-kernel-modules).  
+**Note:** You will need to disable module_locking for loading modules see [Enable loading of kernel modules](https://github.com/dnschneid/crouton/wiki/Build-chrome-os-kernel-and-kernel-modules#enable-loading-of-kernel-modules).  
+We should now have our kernel module autofs4.ko we can copy it anywhere in the chroot. Let's say we make a dir /opt/modules to put our external modules in. In the example we use a chroot named trusty. Adjust the path of autofs4.ko to where it is on your system.
+```
+$ sudo enter-chroot -n trusty
+$ sudo mkdir -p /opt/modules
+$ sudo cp autofs4.ko /opt/modules
+```
+We need to install autofs in our chroot and this example will mount sshfs drives so we also need sshfs package.
+```
+$ sudo apt-get install autofs sshfs
+```
+Configure your autofs to mount the sshfs files by following for example http://www.mccambridge.org/blog/2007/05/totally-seamless-sshfs-under-linux-using-fuse-and-autofs/ which I did.  
+Now load your autofs module and start the daemon. In this example we will start the daemon in foreground, if everything works you can put the commands in /etc/rc.local to do it for you everytime the chroot starts. Just leave away the extra flags and use only `/usr/sbin/automount` to run it in the background.
+```
+$ sudo insmod /opt/modules/autofs4.ko
+$ sudo /usr/sbin/automount -d -f -v
+```
+Your mounted drives should now be working, test them by starting another instance of the chroot. If they are not working see the output of `automount` to troubleshoot.
+
+For mounting cifs and nfs we need to build some additional modules.  
+Mounting cifs modules:
+ * cifs.ko
+ * md4.ko
+
+To build enable the following config in `chromeos/config/base.config`      
+**Note:** If asked during `make oldconfig` for additional configs, you can leave them at default by pressing enter. 
+```
+CONFIG_NETWORK_FILESYSTEMS=y
+CONFIG_CRYPTO_MD4=m
+CONFIG_CIFS=m
+```
+
+Mounting nfs modules:
+ * sunrpc.ko
+ * grace.ko (may be required with newer kernels e.g 3.18)
+ * lockd.ko
+ * nfs.ko
+ * nfsv2.ko
+ * nfsv3.ko
+
+**Note:** You should load the modules in the same order as they are listed above, because of dependencies.  
+To build enable the following config in `chromeos/config/base.config`
+```
+CONFIG_NETWORK_FILESYSTEMS=y
+CONFIG_NFS_FS=m
+```
+
+**Note:** For my nfs share (from a synology NAS) I needed to add the mount option nolock (`-o nolock`) with nfsv3.ko loaded. nfs.ko needs always to be loaded since nfsv2.ko and nfsv3.ko depends on it.  
+You also will need to install nfs-common `sudo apt-get install nfs-common`So, this page will cover 2 annoying issues with lxde.
+the first one is the lxsession: cannot open display.
+the second one is the pid bug ( you can just click ok and get on with your day)
+
+
+
+
+
+now then, for the first bug, this work around is really simple. 
+
+Just enter-chroot as usual, and once in, just run the following line of code:
+```sh
+exec xinit /usr/bin/startlxde
+```
+
+
+It's... that simple.If you'd like to install Ubuntu 20.04 (Focal Fossa) on crouton just use this guide:
+https://github.com/dnschneid/crouton/issues/4265#issuecomment-689346174
+It is a complete guide that walks you through setting up audio and everything for Crouton with ubuntu 20.04. If you make an article or guide on how to do this, please credit me somehow. That would be greatly appreciated.Ubuntu is the default distribution in crouton.
+
+If no release is specified, `xenial` is installed (Ubuntu 16.04 LTS). Prior releases are upstream end-of-life; and later releases are unsupported, but may work with with some effort.
+
+### Upgrade
+
+See [upgrade chroot release](https://github.com/dnschneid/crouton/wiki/Upgrade-chroot-release) wiki page.A. Install Crouton
+`$ sudo install -Dt /usr/local/bin -m 755 ~/Downloads/crouton`
+
+B. Create the ability to have a GUI
+`sudo crouton -r xenial -t x11,keyboard,extension`
+
+(The above will take a little while)
+
+NOTE: xorg acceleration will not work in this setup method, so it's not included as a target above.
+
+C. When the above completes, enter your chroot
+
+`sudo enter-chroot`
+
+Test the install with this command
+
+`xinit`
+
+A small xterm window will open against a black background. Press ctrl-d to exit
+
+D. Install openbox
+
+`sudo apt-get install openbox menu nano`
+
+(The above will take a little while)
+
+E. We need to create a few configuration files
+
+`nano .Xresources`
+
+    xterm*font:10x20
+    xterm*geometry:80x25
+    xterm*background:black
+    xterm*foreground:green
+
+`nano .xinitrc`
+
+    xsetroot -solid teal &
+    xrdb .Xresources &
+    exec openbox
+
+Test your new GUI with the same command we used before
+
+`xinit`
+
+You will see a teal-colored background and a cursor. Right-click using the touchpad, then click on the top item, Terminal Emulator. A very nice xterm will open up with easily readable green letters against a black background.
+
+Congratulations! You can now install anything else you wish from the terminal. What follows is merely a suggestion.
+
+
+***
+
+Exit your "desktop" and chroot.
+
+Enter your chroot. Now we will use some "spare parts" from LXDE to create a more usable environment
+
+`sudo apt-get install pcmanfm lxpanel lxterminal lxappearance leafpad`
+
+After the above, we need to tweak the .xinitrc file so it appears something like this
+
+`nano .xinitrc`
+
+    xrdb .Xresources &
+    croutonpowerd -i &
+    syndaemon -i 2 -K -d &
+    xscreensaver -no-splash &
+    pcmanfm --desktop &
+    lxpanel &
+    exec openbox
+
+After all the above, from within the chroot, execute
+
+`xinit`
+
+You will now see the LXDE menu at the bottom of the page. Click on its start icon (it looks like a grey or light-blue terminal), choose Preferences, and Customize Look and Feel. Under the widgets tab, change to Clearlooks, and under Icons, choose the Humanity theme, and click OK. Click on the start icon again, choose Preferences, Desktop Preferences, and choose a background color or image. Under Advanced, click "Show menus provided by window managers" and apply the changes, click OK.
+
+Now is a great time to fix the double-click interval with the following. Note that you'll have to exit the "desktop" and re-enter for this change to take effect.
+
+`nano .gtkrc-2.0.mine` and add the code `gtk-double-click-time=1000`
+
+At this point, you have a more usable system! You can tweak other settings similar as you would in LXDE, and add other packages, without encountering the errors associated with installing the LXDE "target" from crouton.
+
+To kickstart your session from ChromeOS, from the shell, type the following command
+
+`sudo enter-chroot -b xinit`
+
+This assumes you only this single chroot.
+
+Limitations: No xorg acceleration. For example, in SMplayer, use x11 instead xv for video. Also, cannot copy & paste between applications. However, the croutonurlhandler will work. You may have to manually press Shift-Ctrl-Alt-LeftArrow the 1st time. No icons on the desktop, not a big deal. Trash can not visible, it's location is `.local/Share/Trash`, and you can empty trash with `rm -R .local/Share/Trash/*'.ChromeOS changed something. So now you get an error about too many symlinks. You must remount your USB or MicroSD after each bootup.
+
+Assume your USB or MicroSD is named MyStuff. Here is the command to use:
+
+`sudo mount -o remount,symfollow /media/removable/MyStuff`
+
+Personally, I keep an alias inside .bashrc to handle this for me:
+
+`alias remount="sudo mount -o remount,symfollow /media/removable/MyStuff/"`
+
+Then, upon each bootup, I go to shell and enter the command, `remount`
+
+I hope this helps.Quit downloading the same releases over and over. Here is a simple example, using 3 different releases:
+
+    sudo sh ~/Downloads/crouton -d -f ~/Downloads/trusty.tar.bz2 -r trusty  
+    sudo sh ~/Downloads/crouton -d -f ~/Downloads/xenial.tar.bz2 -r xenial  
+    sudo sh ~/Downloads/crouton -d -f ~/Downloads/stretch.tar.bz2 -r stretch
+
+Now here is how to install targets from each release:  
+
+    sudo sh ~/Downloads/crouton -f ~/Downloads/trusty.tar.bz2 -t lxde,xfce,xorg,xiwi,keyboard  
+    sudo sh ~/Downloads/crouton -f ~/Downloads/xenial.tar.bz2 -t lxde,xfce,xorg,xiwi,keyboard  
+    sudo sh ~/Downloads/crouton -f ~/Downloads/stretch.tar.bz2 -t lxde,xfce,xorg,xiwi,keyboard
+
+Note how you don't have to specify the release when using the file name, just the targets. This way, when you have to delete a chroot, you don't save to start from scratch to install it again.  
+  
+Have fun!Theoretically, you can install any target with any release. But not all combinations work equally well. Here is what I've discovered:
+
+1. -r trusty -t lxde
+2. -r xenial -t xfce
+3. -r stretch -t gnome
+
+You can add the extra goodies to each of the above. For example:
+
+`sudo crouton -r trusty -t lxde,xorg,xiwi,keyboard`
+
+lxde is my favorite DE (Desktop Environment), but it's very bare bones, and needs some manual tweaking in order to work well. The lxde target, in my experience, only works properly in trusty; in other releases, you get the irritating "no session for pid" error.
+
+James**This should go in the *Issues* tab, and this page should be removed**
+
+    When I open Crosh and try to open Linux from there I am answered with the error message of: "ln: failed to access '/var/run/crouton/mnt/stateful_partition/crouton/chroots/xenial/etc/resolv.conf': Permission denied". I'm not entirely sure what this means except for the fact that I need permission to open this. I am not running these programs on a work or school computer and I am not connected to any enterprise or enterprise like wifi networks. Every other time I have tried to open Linux this way, it works. I am using a Samsung Chromebook, but I am unsure of the model. If anyone knows a way to fix this or what is keeping me from opening Linux, that would be great, thanks 
+
+What it looks like(not a screenshot):
+Loading extra module: /usr/share/crosh/dev.d/50-crosh.sh
+Welcome to crosh, the Chrome OS developer shell.
+
+If you got here by mistake, don't panic!  Just close this tab and carry on.
+
+Type 'help' for a list of commands.
+
+If you want to customize the look/behavior, you can use the options page.
+Load it by using the Ctrl+Shift+P keyboard shortcut.
+
+crosh> shell
+chronos@localhost / $ sudo startxfce4
+Entering /mnt/stateful_partition/crouton/chroots/xenial...
+ln: failed to access '/var/run/crouton/mnt/stateful_partition/crouton/chroots/xenial/etc/resolv.conf': Permission denied
+Unmounting /mnt/stateful_partition/crouton/chroots/xenial...
+chronos@localhost / $ 

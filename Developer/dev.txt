@@ -1,0 +1,1128 @@
+# What is Debian?
+Debian is a common Linux distribution that uses the APT package manager, dpkg, and .deb. The popular Linux distribution Ubuntu is based on Debian, Hence why it uses the same package manager. Debian has a large repository of packages and it is the main selling point. its website is [debian.org](https://www.debian.org/)
+# Should I use it?
+Sure, but it doesn't include many useful packages by default though so you need to manually install things like LibreOffice, Firefox, and for the Gnome3 shell, you don't get a taskbar by default. (to fix this, get a Gnome shell extension like dashtodock.
+# How do I install it?
+`cd`
+
+`sudo install -Dt /usr/local/bin -m 755 ~/Downloads/crouton`
+
+`sudo crouton -r <available Debian distribution>`
+
+for a DE other than xfce4, use `-f [available DE]`The below instructions carry a  downside: you may be replacing a distro's firmware with older versions. In most cases, all you need is 2 files from the Chromebook, without which the mic of your internal soundcard simply will not work correctly. This is specific to each Chromebook, so I can only show you an example for an Acer Chromebook 11 C740:
+
+From the shell, `cd /etc/modprobe.d` then `ls -l`. I find a file called alsa-auron_paine.conf. After executing `cat alsa-auron_pain.conf`, I see this:
+
+options snd_hda_intel model=auron_paine patch=,auron_paine_alsa.fw
+
+Ah ha!!! Gotcha!!! You will need to copy alsa-auron_paine.conf to /etc/modprobe.d, and auron_pain_alsa.fw to /lib/firmware.
+
+After this, reboot your Linux install and use alsamixer to configure your sound card: the built-in mic now works!!!
+
+
+***
+
+
+Where can you find the firmware you need to do a full install of Linux on your Chromebook? From the Chromebook itself! Especially the sound card...
+
+The following may be considered experimental. I have found it to work on my Acer Chromebook 11 C740, using Debian Stretch, as well as Lubuntu 14.04.1, 16.04.1, and 18.04.1.
+
+For the purposes of this tutorial, insert a 16 GB USB stick or MicroSD card in your Chromebook and format it in File Manager. After it formats, rename it MyStuff.
+
+Then, from the Chrome shell, execute the following 2 commands:
+
+`cp -R /lib/firmware/ /media/removable/MyStuff/` and
+
+`cp -R /etc/modprobe.d/ /media/removable/MyStuff/`
+
+Now install your Linux on the built-in SSD or any other location. For the purposes of this tutorial, assume the user's name is james. Log into your now-installed Linux OS, and from a terminal, execute the following 2 commands:
+
+`sudo cp -R /media/james/MyStuff/firmware/* /lib/firmware/` and
+
+`sudo cp -R /media/james/MyStuff/modprobe.d/* /etc/modprobe.d/`
+
+Now shutdown and reboot your full Linux install. Try configuring your sound card using alsamixer.
+
+This technique also works if you're attempting to install the Official Debian netinst.iso: when you reach the point where the network hardware cannot be found, insert your memory stick and Debian will find it. Then, after the install, reboot and follow the above steps, then reboot one more time.
+
+Feel free to edit this tutorial or provide feedback on your success or any problems you encounter.
+
+Jameserror while loading shared libraries: libQt5Core.so.5: cannot open shared object file: No such file or directory
+***
+This error appears to occur when running any Qt5-based program in a very current chroot, e.g. Debian Buster. The problem is deeper than I can comprehend, but it has to do with Chromebook's kernel version.
+
+Go the shell, and type
+
+`uname -r`
+
+For my Acer Chromebook 11 C740, I get 3.14.0
+
+The kernel needs to be at least 3.15 for a very real but (to me) esoteric reason: "Qt 5.10 uses the renameat2 system call which is only available since kernel 3.15". If you want to read a very long thread, look here:
+
+[https://bbs.archlinux.org/viewtopic.php?id=232682](https://bbs.archlinux.org/viewtopic.php?id=232682)
+
+You need not understand the inner workings of a car to drive one (thank goodness), nor do you need to understand the intricacies of this error to fix it:
+
+`sudo strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5`
+
+The above command "strips out" a piece of code which is looking in the kernel for something not there, and allows the module to load.
+
+Read more:
+
+[https://superuser.com/questions/1347723/arch-on-wsl-libqt5core-so-5-not-found-despite-being-installed](https://superuser.com/questions/1347723/arch-on-wsl-libqt5core-so-5-not-found-despite-being-installed)
+
+Good Luck running Buster. It seems surprisingly stable while giving very current versions of packages.
+
+~James
+
+Experienced this problem when installing FreeCAD and LibreCAD on an old Chromebook HP G4 running Kali (kernel 3.8).<br/>The solution in my case was:<br/>`sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5`<br/>
+-jernic
+
+This fixed the error
+
+`error while loading shared libraries: libQt5Core.so.5: cannot open shared object file: No such file or directory`
+
+when running `systemdgenie` as part of an [ArchWSL install](https://github.com/yuk7/ArchWSL/wiki/Known-issues#systemdsystemctl). Thanks. 
+- thomasn
+* No FAT, please.
+
+The file manager in Chrome OS can format external storage, but it uses FAT32, which doesn't support symbolic links and other features that Linux users want in file storage. Here's how to use Crouton CLI to format external storage to ext4.
+
+Change the specifics of this example to match your situation:
+  * /User/ - bfw
+  * /SD card/ - Samsung SDXC 64GB Class 10 UHS-1 
+  * /Device/ - mmcblk1
+  * /Partitions/ - none
+  * /File system type/ - ext4
+
+My SD card had a partition, but yours may not.
+
+#+BEGIN_SRC
+(xenial)bfw@localhost:~$ lsblk | grep mmcblk1
+mmcblk1       179:64   0 59.6G  0 disk 
+`-mmcblk1p1   179:65   0 59.6G  0 part /var/host/media/removable/CB3-131
+(xenial)bfw@localhost:~$
+#+END_SRC
+
+If the card is mounted, [[https://support.google.com/chromebook/forum/AAAAmKCdEusg5Oszh0pfLk?hl=en][Chrome OS unmount it]].
+
+#+BEGIN_SRC
+$ lsblk | grep mmcblk1
+mmcblk1       179:64   0 59.6G  0 disk 
+`-mmcblk1p1   179:65   0 59.6G  0 part 
+$
+#+END_SRC
+
+Wipe any partition table with dd and format.
+
+#+BEGIN_SRC
+$ sudo dd if=/dev/zero of=/dev/mmcblk1 bs=1M count=100
+...
+104857600 bytes (105 MB, 100 MiB) copied, 6.76475 s, 15.5 MB/s
+$ sudo mkfs.ext4 -L "Sam64GBext4" /dev/mmcblk1
+...
+$ sudo sync
+$ 
+#+END_SRC
+
+Physically eject and reinsert the SD card.
+
+Create directories and change permissions.
+
+#+BEGIN_SRC
+$ lsblk | grep mmcblk1
+mmcblk1       179:64   0 59.6G  0 disk /var/host/media/removable/Sam64GBext4
+$ cd /var/host/media/removable/Sam64GBext4
+$ sudo mkdir Downloads bfw
+$ sudo chmod a+rwx Downloads
+$ sudo chown bfw bfw; sudo chgrp bfw bfw
+$
+#+END_SRCIf you want to integrate crouton with the Chrome OS system clipboard you have two choices:
+
+# Crouton clipboard
+This is chiefly made for vim users, but I'm sure you could port it to emacs or whatever you want to do with it.
+
+[Github repo](https://github.com/zwhitchcox/crouton-clipboard)
+
+[Chrome Extension](https://chrome.google.com/webstore/detail/crouton-clipboard/jipofmbanedhjnpooojdeeddanhfljif)
+
+# crosh-clip
+
+Binary releases and source code are available here [croshclip](https://github.com/acornejo/croshclip). It relies on the 
+the same crouton integration [extension](https://github.com/acornejo/croshclip) used by xiwi.[OpenConnect](http://www.infradead.org/openconnect/) is also a client for Juniper's Junos Pulse SSL VPN.
+
+The required programs to use OpenConnect with a Juniper VPN are
+* `ifconfig` to bring the tunnel up/down
+* `vpnc` to set the routing and name services up
+* `openconnect`
+* `juniper-vpn-py` to handle the Junos web interface and optional 2-Factor Auth
+
+Since the Junos Pulse support in OpenConnect is experimental, we will need to build from source.
+
+Step 1: Setup Prerequisites (Including packages for juinper-vpn-py & ifconfig)
+````
+sudo apt-get install vpnc
+sudo chmod a+x+r -R /etc/vpnc
+sudo apt-get install libxml2 libxml2-dev gettext make libssl-dev pkg-config libtool autoconf git python-pip net-tools libgnutls-dev 
+````
+Step 2: Clone and Build OpenConnect
+````
+git clone git://git.infradead.org/users/dwmw2/openconnect.git
+cd openconnect
+autoreconf -iv
+./configure
+make
+sudo make install
+````
+Step 3: Setup juniper-vpn-py
+````
+sudo pip install mechanize
+git clone https://github.com/russdill/juniper-vpn-py
+cd juniper-vpn-py
+sed -i '/ssl._create_default_https_context = ssl._create_unverified_context/d' ./juniper-vpn.py
+sed -i '/ssl._create_default_https_context = ssl._create_unverified_context/d' ./tncc.py
+````
+Step 4: Add support for resolvconf to /etc/rc.local for automatic DNS update.
+See https://github.com/dnschneid/crouton/wiki/VPNC#update-dns
+````
+mkdir -p /run/resolvconf/interface
+cp /etc/resolv.conf /run/resolvconf/resolv.conf
+mv /etc/resolv.conf /run/resolvconf/interface/mlan0
+ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+resolvconf --enable-updates
+````
+
+Okay, you should be ready to rock. If you've encountered errors - please update this wiki with any fixes.
+
+To simplify the VPN connection process you can use a script like the below. Sometimes, the tunnel is not created on the first try. Just escape the script with `Ctrl-C` if there are errors, and rerun it.
+````
+#!/bin/bash
+
+if (ip tuntap add dev tun0 mode tun)
+then
+  echo "New tun Created Successfully"
+  sleep 4
+else
+  echo "Old tun Exists, Need to Cleanup"
+  ifconfig tun0 down
+  ip tuntap del dev tun0 mode tun
+  sleep 4
+  ip tuntap add dev tun0 mode tun
+  sleep 4
+fi
+
+if(ifconfig tun0 up)
+then
+  echo "Interface tun0 is up"
+else
+  echo "Something went wrong, exiting..."
+  exit;
+fi
+
+export LD_LIBRARY_PATH="/usr/local/lib"
+
+python /home/louis/VPN/juniper-vpn-py/juniper-vpn.py --host vpn.example.com --user louis --stdin DSID=%DSID% openconnect --juniper %HOST% --cookie-on-stdin --interface=tun0
+````
+
+To stop a VPN session, press `Ctrl-C` and kill the interface (sudo ifconfig tun0 down).
+
+*** Update ***
+
+Please follow the suggestions here to keep your tun alive and safe from Shill https://github.com/dnschneid/crouton/issues/2215An aggravating message when using the target lxde for most releases. Although I haven't found a fix for this, it is apparently related to any release which uses systemd. After clicking OK (or sometimes Esc), the session seems to work OK.
+
+So here is my suggestion: Install lubuntu 14.04.5. Why? Because it does not use systemd! LXDE works beautifully for this release.
+
+EDIT: The below hacks are no longer needed. LXDE works great in Trusty!
+
+
+***
+
+It will still be necessary to tweak the video settings if you wish to use xorg. Please see:  
+
+[https://github.com/dnschneid/crouton/wiki/Fix-intel-xorg-problems-in-crouton](https://github.com/dnschneid/crouton/wiki/Fix-intel-xorg-problems-in-crouton)
+
+
+***
+
+
+So here is the drill:
+
+    sudo sh ~/Downloads/crouton -d -f ~/Downloads/trusty.tar.bz2 -r trusty  
+    sudo sh ~/Downloads/crouton -f ~/Downloads/trusty.tar.bz2 -t lxde,xorg,xiwi,keyboard
+
+At least, that is how I do it. LXDE needs a few other tweaks for the best user experience, but I will cover those in another tutorial.LXDE works best with the trusty release. I will assume you are using -r trusty -t lxde, and will try to offer alternatives when possible. LXDE is lean but powerful, yet some files need to be edited manually. Make the following tweaks, then exit and restart your chroot for the changes to take effect.
+
+1. Double-Click Speed: create the file `.gtkrc-2.0` in your home folder. It should contain the single line:  
+
+`gtk-double-click-time=1000`  
+
+The time above is in milliseconds, so for 1/2 second it would be 500. Without this config file, the default is 200.  
+
+2. To avoid "not allowed" errors when you insert an external CD, DVD, USB, or MicroSD, add a package, as follows:
+
+`sudo apt-get install policykit-1-gnome`  
+
+After the install, from the LXDE menu click on Preferences and then Desktop Session Settings, and place a checkmark in Policykit Authentication Agent, then click OK. Finally, delete the line referring to this package in `.config/lxsession/LXDE/autostart`  
+
+3. Regarding the above autostart file, I like to add 2 lines of my own:  
+
+`@syndaemon -i 2 -K d`  
+`@xrandr --output eDP1 --brightness .75`  
+
+NOTE: If you are using Debian Stretch, the 1st line above will not work. Also, eDP1 needs to be replaced with eDP-1. Stretch uses a totally different approach to managing keyboard and mouse input events. I will cover this in another turorial, then come back and link to it here.  
+
+It is worth noting that neither of these autostart lines will have any effect if you are running in xiwi mode.  
+
+4. lxterminal: I like to add lxterminal to the left-hand Application Launch Bar. It is too tedious to describe in detail, just right-click on the panel and select panel settings. You'll figure it out...
+
+***
+
+EDIT: The following no longer seems to be necessary. I just installed a fresh chroot using -r trusty and -t lxde,xorg,xiwi,keyboard and the video worked without a glitch!
+
+5. If you not yet tweaked your xorg settings, refer to this hack:
+
+[https://github.com/dnschneid/crouton/wiki/Fix-intel-xorg-problems-in-crouton](https://github.com/dnschneid/crouton/wiki/Fix-intel-xorg-problems-in-crouton)  
+
+Exit your chroot, fire it up, and test everything out. This was a difficult tutorial to write, so please let me know of you see anything amiss. Thanks!The steps in the wiki were tested on a Samsung Chromebook Plus with [crouton integration](https://chrome.google.com/webstore/detail/crouton-integration/gcpneefbbnfalgjniomfjknbcgkbijom).
+
+#### Installing LyX
+At time of writing, the LyX version offered in the `xenial` repositories was 2.1.x. Since 2.2 was the first version to support HiDPI it is recommended to install a distro whose repositories offer a newer version, for example `stretch`. Therefore, install your chroot with
+
+    sudo sh ~/Downloads/crouton -r stretch -t xiwi
+After the installation is complete, enter your chroot and install LyX
+
+    sudo enter-chroot
+    sudo apt install lyx
+#### Enabling HiDPI and scaling
+Still in chroot, edit `/etc/crouton/xserverrc-xiwi` and add `-dpi 200x200` before the right `"` in the line that starts with `XARGS`. This can be done with [vi](https://en.wikipedia.org/wiki/Vi) or any other text editor. The value `200x200` can be replaced with any value of your liking.
+When you find a value you are satisfied with, create a backup of `/etc/crouton/xserverrc-xiwi` as this file will be reset when you update your chroot (see the [source](Chromebook-Pixel#hidpi-in-xiwi-window) of this workaround):
+
+    sudo cp /etc/crouton/xserverrc-xiwi /etc/crouton/xserverrc-xiwi.bak
+Leave the chroot with `Ctrl+D` and launch LyX<sup>1</sup>
+
+    sudo startxiwi lyx
+In a Chrome browser window, click on the crouton extension icon and check `HiDPI` (this requires [crouton integration](https://chrome.google.com/webstore/detail/crouton-integration/gcpneefbbnfalgjniomfjknbcgkbijom)).
+In LyX, rightclick any icon to open the icon-size menu and choose a more reasonable icon size (this step doesn't work in LyX 2.1.x).
+
+<sup>1</sup> At time of writing, there is an [issue](https://github.com/dnschneid/crouton/issues/3474) with launching X on stretch. Luckily, there is also a workaround (in the issue page).
+
+#### Starting LyX
+To start LyX, run
+
+    sudo startxiwi lyxDespite crouton not supporting KVM for Virtualization, it is still a proper platform for using QEMU. It can run with Bart PE and [Rasbian Images](http://www.raspberrypi.org/phpBB3/viewtopic.php?f=29&t=37386), install Windows XP, and new from the labs, Ubuntu Server, regardless of the supporting architecture.
+
+First thing we need is an iso of [Ubuntu Server](http://www.mirrorservice.org/sites/releases.ubuntu.com//raring/ubuntu-13.04-server-amd64.iso), as your standard live Desktop will not cut it.  QEMU and QEMU Launcher would be the supported programs on my end, but feel free to be flexible. Defaults settings will work on QEMU, and should work fine for the Ubuntu Install, so long as you press F4 at the "Install Ubuntu Server" splash screen, then enter and proceed as normal.
+
+![Something like this.](http://static.howtoforge.com/images/perfect_server_ubuntu_13.04_nginx_bind_dovecot_ispconfig_3/big/2.png)
+
+It is going to be a long and hard journey, and if the install fails, you have to start over from the last completed step. Could take as long as an entire day, but it is the only way. [Or use my premade image.](https://dl.dropboxusercontent.com/u/24460824/Server) Like with the Raspbian image, forwarding 5022 to 22 will get you networking in the virtual machine. While you may be better off with running off a proper install of Ubuntu on your local hard drive or external USB through Chrubuntu, but if you need a Virtual Machine, this could tide you over.ChromeOS can run a lot of Chrome processes. If you are working primarily in your crouton chroot, then this can place an excessive load on the system.
+
+I've found that it is possible to kill a lot of these Chrome processes without doing anything damaging (though you will lose any unsaved data on websites in Chrome). These should be the ChromeOS chrome processes: <code>/opt/chrome/chrome/chrome</code>
+Try this
+
+  <pre>ps ax -o sess,pgrp,pid,cmd | awk '$4 ~ /\/chrome$/ { print $3 }' | xargs $nodo kill</pre>
+
+Note that if you are running Chrome in your chroot, it *may* (I haven't tested it) be killed.
+
+PS: if you set a variable <code>nodo=echo</code> then it is a dry-run. This section provides full instructions about rebuilding a kernel, not just changing the boot options. Thanks to juancferrer.
+
+1.Open a shell on your Chrome OS
+
+**2.Disable verified boot :**
+(You could do this later, but you have to do this before step 10. It won't boot up otherwise.)
+>**sudo crossystem dev_boot_signed_only=0**
+
+3.Change current directory to `Downloads` as a temporary folder:
+> cd ~/Downloads/
+
+4.Copy the existing kernel into a file:
+>sudo dd if=/dev/sda2 of=kernel2<br>
+>sudo dd if=/dev/sda4 of=kernel4
+
+5.Get the kernel configuration:
+>vbutil_kernel --verify kernel2 --verbose | tail -1 > vmxoff-config2.txt<br>
+>vbutil_kernel --verify kernel4 --verbose | tail -1 > vmxoff-config4.txt
+
+6.At this point you change the configuration. For example to enable VT_x (see also [[Enable kernel VT_x for Virtualbox]]) add 'disablevmx=off' to the config line:
+>sed -i -e 's/$/ disablevmx=off/' vmxoff-config2.txt<br>
+>sed -i -e 's/$/ disablevmx=off/' vmxoff-config4.txt
+
+7.Repack the kernels:
+>vbutil_kernel --repack repacked2 
+    --signprivate /usr/share/vboot/devkeys/kernel_data_key.vbprivk 
+    --keyblock /usr/share/vboot/devkeys/kernel.keyblock 
+    --oldblob kernel2 
+    --config vmxoff-config2.txt
+
+>vbutil_kernel --repack repacked4 
+    --signprivate /usr/share/vboot/devkeys/kernel_data_key.vbprivk
+    --keyblock /usr/share/vboot/devkeys/kernel.keyblock
+    --oldblob kernel4
+    --config vmxoff-config4.txt
+
+8.Verify the new kernels (You should see `Body verification succeeded`):
+>vbutil_kernel --verify repacked2 --verbose<br>
+>vbutil_kernel --verify repacked4 --verbose
+
+9.Copy the kernels back:
+>sudo dd if=repacked2 of=/dev/sda2<br>
+>sudo dd if=repacked4 of=/dev/sda4
+
+10.Reboot, and enjoy VT-x extensionsIf you plan to run a server within crouton, you'll need the following:
+
+1. Open a terminal session in your chroot.
+2. Install the iptables package, `sudo apt-get install iptables`
+3. Add a line to `/etc/rc.local` to launch the service you want. Examples for different services are given below.
+4. Add a line to `/etc/rc.local` to open the firewall, for example:
+    1. `/sbin/iptables -P INPUT ACCEPT` to accept all inbound traffic. 
+    2. `/sbin/ip6tables -P INPUT ACCEPT` to accept all inbound IPv6 traffic. Or,
+    3. `/sbin/iptables -I INPUT -p tcp --dport 22 -j ACCEPT` to accept a specific port, e.g. `22` for the SSH example.
+
+This will start the server when the chroot is started, not when ChromeOS is booting. To auto-start the chroot on ChromeOS boot, see [[these instructions|Autostart crouton chroot at ChromeOS startup]].
+
+# OpenSSH Server
+Add the following to /etc/rc.local to enable ssh into your chroot. Tested in Ubuntu 13.10. Previously /etc/init.d/ssh start was all that was needed. Works well with [Secure Shell](https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo) Chrome app.
+
+On Jessie and Sid only the iptables rule is needed. `sudo system ssh start` will work to start the server.
+
+```
+mkdir -p -m0755 /var/run/sshd
+/usr/sbin/sshd
+```
+[update] In Debian 11 Bullseye install the usual ssh stuff via your package manager and open port 22 like this:
+```
+iptables-legacy -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+```
+Don't use `iptables-nft` because it's broken in Debian 11 or it has troubles running in a chroot. And nowadays we don't know if the command `iptables` is a symlink to `iptables-nft` or `iptables-lecacy` so don't use that either. 
+
+Then start the ssh server daemon like this:
+```
+sudo service ssh start
+```
+Check status with `sudo service ssh `.
+
+Commands that use `systemctl` (from systemd) instead of `service` do *not* work in a chroot and therefore do not work in Crouton. 
+
+# avahi and mDNS
+1. Install the avahi-daemon, avahi-utils and libnss-mdns packages, `sudo apt-get install avahi-daemon avahi-utils libnss-mdns`
+2. In the /etc/avahi/avahi-daemon.conf file, uncomment the `#host-name=foo` record and set the host-name you desire, for example `hostname=mychromebook`.
+3. Add the following to /etc/rc.local to enable avahi in your chroot. Tested in Ubuntu 12.04. Do not run avahi-daemon as a daemon (-D option). Doing so will cause it to miss the configuration parameters in /etc/avahi and fail.
+
+`/usr/sbin/avahi-daemon --syslog &`
+
+Optionally, if you are running an OpenSSH or apache server, add corresponding service files to the /etc/avahi/services directory in order to publicize the service on the local network. An example for OpenSSH:
+```
+cat /etc/avahi/services/ssh.service
+<service-group>
+  <name replace-wildcards="yes">%h</name>
+  <service>
+    <type>_ssh._tcp</type>
+    <port>22</port>
+  </service>
+</service-group>
+```
+A quick test of the service is to ping a known local resource: `ping myhomelanserver.local`. The the local name should resolve to the server IP address.
+
+# LAMP
+You'll need to start Apache and MySQL on your rc.local
+
+1. nano /etc/rc.local
+2. Paste this using shift+ctrl+v, save with ctrl+x
+```
+/etc/init.d/apache2 start
+
+export HOME=/etc/mysql
+umask 007
+[ -d /var/run/mysqld ] || install -m 755 -o mysql -g root -d /var/run/mysqld
+/usr/sbin/mysqld &
+```
+3. save with ctrl+xGreetings. I use this set of scripts to quickly recover my VirtualBox environment after CrOS updates. Nothing fancy but perhaps they're useful to others. Usage notes are in the tar. Questions or comments invited. Thanks.
+
+https://drive.google.com/file/d/0B5L6chr0QvNzVEFUcmN5N1Z4MTg/view?usp=sharing
+
+--Lauren--
+
+Lauren Weinstein
+
+lauren@vortex.com
+
+[Lauren's Blog](http://lauren.vortex.com)crouton is not and cannot be as secure as Chromium OS in verified mode.  Here's why:
+
+Chromium OS's security out of the box is extremely good. All code that is natively run is either explicitly vetted by the chain of trust that starts from the embedded controller (the OS and Chrome itself) or permuted such that it cannot escape a narrowly-defined sandbox (NaCl, Pepper plugins, etc). If you have a Chromebook and you're running ChromeOS, it's even better, as the chain of trust starts from the TPM. (This might be a little off on the details, but secure boot is way better documented elsewhere.)
+Since arbitrary code can't run, you don't get keyloggers, screen readers, session/password hijackers running natively on the machine. Your user profile is encrypted with your password, and if you lock the screen or reboot, there's no way to access the unencrypted contents.
+
+Of course, without arbitrary code execution, crouton can't work. So you enable dev mode.
+
+Dev mode out of the box does several things that compromise security, including disabling verified boot, enabling VT2, and activating passwordless root shell access. This means even without crouton, if you're in dev mode, someone can switch to VT2, log in as root and add a keylogger that runs at startup, then switch back without you knowing. If you're logged in, they can also access the unencrypted contents of your Chrome profile and copy it elsewhere. If an exploit to Chrome is found, verified boot will no longer protect you from persistent compromises. Essentially, dev mode by default is less physically secure than a standard laptop running Linux\*.
+
+crouton adds a huge attack vector to the system by running a lot of unvetted code (i.e., all of Debian/Ubuntu/whatever). While it tries pretty hard to keep things restricted for non-root and installing and running as few things as possible, fundamentally there's nothing about a chroot that prevents a process with root access from escaping the chroot and compromising Chromium OS itself. So any remote root exploit anywhere in your Linux distro of choice now could be used to compromise Chromium OS.
+
+crouton gives you the option to encrypt your chroot, which attempts to regain a lot of the security guarantees of stock Chromium OS. For starters, it refuses to let you mount an encrypted chroot without first setting a root password. So the VT2 attack is password-protected, which helps physical security (assuming you don't leave your chroot's graphical session unlocked). It re-enables verified boot when it can, although this is a bit of a false sense of security, as anything with the ability to escape the chroot and edit the rootfs also has the permissions necessary to disable verified boot again as well. But it does enable you to check at bootup whether verification is enabled if you're paranoid (press TAB at the Scary Warning Screen), so if you reboot and you see verification is enabled at the boot screen, you can be reasonably sure you haven't been persistently compromised inside Chromium OS. Once you enter the chroot after booting, though, that guarantee is of course gone. Finally, crouton encrypts the entire chroot and prevents non-root users from accessing the unencrypted mount. This is to protect your chroot from Chromium OS; if you reboot or Chromium has a non-root exploit, nothing can touch your chroot (or if it does, at least the chroot will break so it's obvious).
+
+Despite that, an encrypted chroot absolutely does not have the same strong security guarantees that fully-verified ChromeOS has. At best, it's a tad better than a stock Linux distribution.
+
+Be aware though, that at the moment, crouton [does not implement verification of the initial bootstrap](https://github.com/dnschneid/crouton/issues/2362).  This means that until this fixed, the bootstrap step (or tarball) should be downloaded on a trustworthy link to the internet (which may be impossible depending on your level of justified paranoia), or should be verified manually by other means.
+
+***
+
+\* Justification: with a standard laptop running Linux, you can physically compromise the security of a system by rebooting into single-user mode to gain root, but that would lock you out of any encrypted disks. With dev mode, you can just switch to VT2 and have root, and your profile is available for the reading, plain as day.# Basic Concepts
+`sommelier` works by redirecting X11 and Wayland programs to the built-in ChromeOS wayland server. It even supports hardware acceleration on platforms with "xorg" target support! It was designed for the crostini VM, however early versions of it can be used within crouton with relative ease.
+# Set up
+### Download
+The first step in setting up sommelier is to download it. The version that works the best with crouton currently is the commit [1382ce084cc40790340d672e8b62ec47733cb860](https://chromium.googlesource.com/chromiumos/containers/sommelier/+/1382ce084cc40790340d672e8b62ec47733cb860). You can easily download it as a .tar.gz file [here](https://chromium.googlesource.com/chromiumos/containers/sommelier/+archive/1382ce084cc40790340d672e8b62ec47733cb860.tar.gz).
+Then (within your crouton chroot) extract it with:
+```sh
+cd ~/Downloads/
+mkdir sommelier
+mv sommelier-1382ce084cc40790340d672e8b62ec47733cb860.tar.gz sommelier
+cd sommelier
+tar -xzf sommelier-1382ce084cc40790340d672e8b62ec47733cb860.tar.gz
+```
+### Installation
+After downloading sommelier, the first thing you should do is setup its environment variables. These will need to be set whenever it's run, so you probably should add them to `~/.bashrc`.
+```sh
+export GDK_BACKEND=wayland 
+export CLUTTER_BACKEND=wayland
+export XDG_RUNTIME_DIR='/var/run/chrome'
+export WAYLAND_DISPLAY=wayland-0
+export DISPLAY=:0
+```
+Next, you'll need to build it. Thankfully, this is relatively simple. First, install the necessary dependencies.
+```sh
+sudo apt update
+sudo apt install -y pkg-config git make xwayland libwayland-dev libgbm-dev gcc libx11-xcb-dev libsystemd-dev libxcb-composite0-dev libxkbcommon-dev libxrender-dev libxtst-dev libpixman-1-dev
+```
+Then actually build it!  Whilst in sommelier's directory:
+```sh
+make
+```
+Then, in order to run sommelier as shown below, make the `sommelierrc` file executable:
+```sh
+chmod +x sommelierrc
+```
+You can also install it:
+```sh
+sudo make install
+```
+
+Finally, to stop getting a warning when running sommelier (`_XSERVTransmkdir: Owner of /tmp/.X11-unix should be set to root`), change the owner of `/tmp/.X11-unix` to root:
+```sh
+sudo chown root:root /tmp/.X11-unix
+```
+### Running sommelier
+For simple forwarding (no hardware acceleration), simply execute this command in sommelier's directory:
+```sh
+./sommelier -X --x-display=:0 --no-exit-with-child /bin/sh -c "./sommelierrc"
+```
+
+
+It might be helpful to add that command to a bash file to run it quickly - for example, add the following line to the end of your `~/.bashrc` file (along with the exports listed above):
+```sh
+alias sommelier='~/Downloads/sommelier/sommelier -X --x-display=:0 --no-exit-with-child /bin/sh -c "~/Downloads/sommelier/sommelierrc"'
+```
+
+### Once again, with hardware acceleration
+Run this monster of a command for forwarding with hardware acceleration:
+```sh
+./sommelier -X --x-display=:0 --glamor --drm-device=/dev/dri/renderD128 --virtwl-device=/dev/null --shm-driver=noop --data-driver=noop --display=wayland-0 --peer-cmd-prefix=/lib64/ld-linux-x86-64.so.2 --xwayland-gl-driver-path=/usr/lib64/dri --xwayland-path=/usr/bin/Xwayland /bin/sh -c "./sommelierrc"
+```
+To run sommelier without sommelierrc:
+```sh
+sommelier -X --x-display=:0 --glamor --drm-device=/dev/dri/renderD128 --virtwl-device=/dev/null --shm-driver=noop --data-driver=noop --display=wayland-0 --peer-cmd-prefix=/lib64/ld-linux-x86-64.so.2 --xwayland-gl-driver-path=/usr/lib64/dri --xwayland-path=/usr/bin/Xwayland </path/to/binary>
+```
+It's recommended you put an alias in your `~/.bashrc` for quick execution:
+```sh
+alias sommelier="sommelier -X --x-display=:0 --glamor --drm-device=/dev/dri/renderD128 --virtwl-device=/dev/null --shm-driver=noop --data-driver=noop --display=wayland-0 --peer-cmd-prefix=/lib64/ld-linux-x86-64.so.2 --xwayland-gl-driver-path=/usr/lib64/dri --xwayland-path=/usr/bin/Xwayland"
+```
+Voilà! With that in your `~/.bashrc`, you can now do `sommelier <program>` and it will forward to ChromeOS with hardware acceleration.
+
+## Some scripts
+
+You can install the following script in `/usr/local/bin/runsommelier` *inside* the chroot to start `sommelier` and an application under it. Further applications can be started the same way with `runsommelier name_of_application`.
+```
+#!/bin/bash
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+export GDK_BACKEND=x11
+export CLUTTER_BACKEND=wayland
+export XDG_RUNTIME_DIR=/var/run/chrome
+export WAYLAND_DISPLAY=wayland-0
+export DISPLAY=:0
+export SCALE=1
+SOMMELIER_ACCELERATORS="Super_L,<Control>space,<Alt>space,<Alt>bracketleft,<Alt>bracketright,<Alt>minus,<Alt>equal"
+
+SOMM=$(pidof sommelier 2> /dev/null)
+if [ -z "$SOMM" ]; then
+  sommelier -X --x-display=$DISPLAY --scale=$SCALE \
+  --accelerators=${SOMMELIER_ACCELERATORS} --no-exit-with-child \
+  /bin/sh -c "/usr/local/etc/sommelierrc" > /tmp/sommelier.log 2>&1 &
+#  /bin/sh -c "/usr/local/etc/sommelierrc" &
+  sleep 3
+fi
+
+SOMM=$(pidof sommelier 2> /dev/null)
+if [ ! -z "$SOMM" ]; then
+  echo "sommelier process $SOMM is running"
+else
+  echo "sommelier failed to start"
+  exit 1
+fi
+
+if [ "$1" ]; then
+#    exec sommelier "$@" &
+    exec sommelier "$@" >> /tmp/sommelier.log 2>&1
+fi
+```
+Next, you can install the following script in `/usr/local/bin/startsommelier` under ChromeOS to replace `startxiwi` with `startsommelier`. So `startsommelier -b lxterminal` will pop-up a terminal.
+```
+#!/bin/sh -e
+# Copyright (c) 2016 The crouton Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+set -e
+
+APPLICATION="${0##*/}"
+ENTERCHROOT="$(dirname "$(readlink -f -- "$0")")/enter-chroot"
+OPTS_ENTER=''
+OPTS_SOMM=''
+
+USAGE="$APPLICATION [options] chroot_app [parameters]
+
+Wraps enter-chroot to launch a window in Chromium OS for any graphical application.
+Applications launched in this way show as independent windows.
+
+By default, it will use the primary user on the first sommelier-enabled chroot found and launch
+the chroot_app in a window.
+
+Options:
+$("$ENTERCHROOT" -h 2>&1 | grep -e ' -[bckntu]')
+
+You should be able to use normal keys inside the application. To use
+ChromeOS keys you may need to hit Search first.
+"
+
+while getopts 'bc:k:n:t:u:FTf' OPT; do
+    case "$OPT" in
+      b) OPTS_ENTER="$OPTS_ENTER -$OPT";;
+      c|k|n|t|u)
+         OPTARG="$(echo -n "$OPTARG" | sed -e "s/'/'\\\\\\''/g")"
+         OPTS_ENTER="$OPTS_ENTER -$OPT '$OPTARG'";;
+      f) OPTS_SOMM="$OPTS_SOMM -$OPT";;
+      \?) echo "$USAGE" 1>&2
+          exit 2;;
+    esac
+done
+shift "$((OPTIND-1))"
+
+if [ "$#" = "0" ]; then 
+    echo "$USAGE" 1>&2
+    exit 2
+fi
+
+#eval "exec sh -e \"\$ENTERCHROOT\" -t xiwi $OPTS_ENTER \
+#    exec xiwi $OPTS_SOMM \"\$@\""
+eval "exec sh -e \"\$ENTERCHROOT\" $OPTS_ENTER \
+    exec runsommelier \"\$@\""
+```
+
+# You're done!
+Now you can use sommelier to run most graphical programs!
+
+Whilst you have sommelier running, run a program (probably from another ChromeOS terminal, having entered your crouton chroot again with something like `sudo enter-chroot`).
+
+If you want to be clever, and have set up the alias above, you can run sommelier in the background with `sommelier &` and then run your graphical program(s) from the same terminal / chroot - sommelier will stop when you exit the chroot.
+
+Note: Programs running through sommelier don't appear to get an icon in the ChromeOS shelf for any of their windows, and you may run into issues if a program goes fullscreen.
+
+![](https://github.com/jcdang/chromeos-ubuntu-sommelier/raw/master/intellij.png)
+# Special thanks
+Special thanks to jcdang for detailing the steps required to running sommelier at https://github.com/jcdang/chromeos-ubuntu-sommelier.[OpenConnect](http://www.infradead.org/openconnect/) is a client for Cisco's AnyConnect SSL VPN.
+
+The required programs to use OpenConnect are 
+* `openvpn` to create a a persistent tunnel,
+* `ifconfig` to bring the tunnel up/down,
+* [[VPNC]],
+* and `openconnect`
+
+The required calls to connect to a Cisco AnyConnect VPN are
+````
+VPNGRP=my-vpn-group
+VPNUSER=my-vpn-user
+VPNURL=https://vpn.mydomain.com
+
+sudo openvpn --mktun --dev tun1 && \
+sudo ifconfig tun1 up && \
+sudo /usr/sbin/openconnect -s /etc/vpnc/vpnc-script $VPNURL --user=$VPNUSER --authgroup=$VPNGRP --interface=tun1
+sudo ifconfig tun1 down
+````
+
+Sometimes, the tunnel is not created on the first try. Just escape the script with `Ctrl-C`, if there are errors, and rerun it.
+
+If the VPN connection works sometimes, but not always, execute the commands to create a tunnel and bring it up (sudo openvpn --mktun --dev tun1 && 
+sudo ifconfig tun1 up) inside the Chrome shell, and not the chroot. Only the `openconnect` command then should be executed in the chroot. See issue #235 .
+
+To stop a VPN session, also press `Ctrl-C`.
+
+## Cisco AnyConnect ChromeOS App
+There is now a Cisco AnyConnect "early adopter preview" ChromeOS app located here:
+https://chrome.google.com/webstore/detail/cisco-anyconnect/jacdijibdjifphcecdielmekkmfdpgee
+
+So far it seems to work fine from ChromeOS and still works fine when switching to/from Crouton. This is way easier than the custom scripts I've been using.
+
+## Solution to make the tun0 interface stable and the openvpn command reliable
+
+The tun0 interface is destroyed by the shill service which automatically kills the "useless" connections.  By default this now also includes 'br0' for android apps so we need to keep that in there and add our tun0.
+The solution is to enter the following commands before openvpn:
+
+```
+sudo stop shill
+# On older versions of ChromeOS; check /etc/init/shill.conf
+sudo start shill BLACKLISTED_DEVICES="tun0,br0"
+# On newer versions
+sudo start shill BLOCKED_DEVICES="tun0,br0"
+```
+the BLACKLISTED_DEVICES tells shill to ignore the "tun0" device (and "br0" for android apps).
+
+To make the life easier it is advised to put a script  under /usr/local/bin/openvpn2
+
+In the following script is included also a trick to change the DNS server on the flight (another known issue, since DNS are not updated by openvpn) :
+
+chronos@localhost /usr/local/bin $ cat openvpn2
+
+```
+#!/bin/sh -e
+trap '' 2
+# Stop shill and restart it with a nicer attitude towards tun0
+sudo stop shill
+sudo start shill BLACKLISTED_DEVICES="br0,tun0"
+# Sleep 10 seconds to allow chromebook to reconnect to the network
+sudo sleep 10
+sudo openvpn --mktun --dev tun0
+sudo sleep 3
+# Add google DNS on top of current ones, since openvpn command does not do it
+sudo sed -i 's/nameserver/# nameserver/' /var/run/shill/resolv.conf
+sudo sed -i '1s/^/# new DNS\nnameserver 8.8.8.8\nnameserver 8.8.4.4\n# old DNS\n/' /var/run/shill/resolv.conf
+# Lauch openvpn, finally...
+sudo openvpn --config $1 --dev tun0
+# When ctrl-c is hit remove tun0 and cleanup the DNS
+sudo openvpn --rmtun --dev tun0
+sudo sed -i '/# new DNS/,/# old DNS/d' /var/run/shill/resolv.conf
+sudo sed -i 's/# nameserver/nameserver/' /var/run/shill/resolv.conf
+trap 2
+```
+
+finally to open the openvpn connection with a configuration file vpn.ovpn you can give the command:
+
+`openvpn2 vpn.ovpn`
+
+To close the VPN it is enough to hit ctrl-c 
+
+So far the above script has been tested with several openvpn configuration files and it is very reliable.
+
+## Variation on the above solution
+
+The above script wasn't working for me for several reasons:
+* My resolv.conf was located at `/var/host/shill/resolv.conf` instead of `/var/run/shill/resolv.conf`
+* I use openconnect rather than openvpn, I've never gotten the latter to work for me
+* The -e flag in the /bin/sh call was causing trap to not work correctly (maybe a side-effect of using openconnect)
+
+My script is an updated version of pippo0312's script, but splices back in elements of the original script up top, since that originally worked for me. It also can remember your password. Also more whitespace.
+
+```
+#!/bin/sh
+
+VPNURL=https://example.com
+VPNGRP=GROUPNAME
+VPNUSER=username
+VPNPASS=password
+
+if [ $USER != "root" ]
+then
+  echo "Must be run as root."
+  exit
+fi
+
+# Prevent ctrl-c from killing the whole script
+trap '' 2
+
+# Stop shill and restart it with a nicer attitude towards tun0
+stop shill
+start shill BLACKLISTED_DEVICES="br0,tun0"
+
+# Sleep 10 seconds to allow chromebook to reconnect to the network
+sleep 10
+openvpn --mktun --dev tun0
+sleep 3
+
+# Add google DNS on top of current ones, since openvpn command does not do it
+sed -i 's/nameserver/# nameserver/' /var/host/shill/resolv.conf
+sed -i '1s/^/# new DNS\nnameserver 8.8.8.8\nnameserver 8.8.4.4\n# old DNS\n/' /var/host/shill/resolv.conf
+
+# Lauch openconnect, finally...
+ifconfig tun0 up
+echo $VPNPASS | openconnect -s /etc/vpnc/vpnc-script $VPNURL --user=$VPNUSER --authgroup=$VPNGRP --interface=tun0 --no-cert-check --passwd-on-stdin
+ifconfig tun0 down
+
+# When ctrl-c is hit remove tun0 and cleanup the DNS
+openvpn --rmtun --dev tun0
+sed -i '/# new DNS/,/# old DNS/d' /var/host/shill/resolv.conf
+sed -i 's/# nameserver/nameserver/' /var/host/shill/resolv.conf
+
+# Stop trapping ctrl-c
+trap 2
+```
+
+It works flawlessly for me on my Toshiba Chromebook 2, as of 2016-12-14.### Use ssh -R to access your VNC Server
+
+Setting up a VNC Server inside your crouton works fine, however Chrome OS seems to block port 5900.
+
+You can try crouton-vnc but if you want just a quick way to connect into your crouton (you need to install (or have already) an ssh-server on the client machine) then you can use the -R command of ssh to make a reverse connection:
+(this is for Ubuntu but the general idea of using ssh should work on other distros/croutons as well)
+
+1. Install and run `vino-preferences` to start a VNC server listening on port 5900.
+
+2. If you're using Ubuntu 14.04 don't forget the [Vino encryption bug](https://bugs.launchpad.net/ubuntu/+source/vino/+bug/1281250) workaround:
+`dconf write /org/gnome/desktop/remote-access/require-encryption false`
+
+3. On your client PC make sure you have an ssh server running.
+
+4. Inside your crouton use ssh to connect to the client machine, i.e. ssh from the host to the client, and use -R to forward port 5900:
+`ssh -R 5900:localhost:5900 clientip`
+
+5. On your client PC, in vncviewer specify 127.0.0.1 as the VNC Server address. Voila.
+# VPNC
+
+Chromium OS has VPN support built-in, but connecting to some VPNs requires client features and configurations that are not available. For those networks, it is possible to establish a VPN connection from a chroot that is usable from both within the chroot and Chromium OS.
+
+These instructions assume you are running an Ubuntu chroot and have been tested with precise.
+
+### Installation
+
+`$ sudo apt-get install vpnc`
+
+### Configuration
+
+Create a `vpnc` conf file as per `man vpnc`. A selection from the man page to help get you started:
+
+<pre>This is an example vpnc.conf with pre-shared keys:
+
+          IPSec gateway vpn.example.com
+          IPSec ID ExampleVpnPSK
+          IKE Authmode psk
+          IPSec secret PskS3cret!
+          Xauth username user@example.com
+          Xauth password USecr3t
+
+And another one with hybrid  authentication  (requires  that  vpnc  was
+built with openssl support):
+
+          IPSec gateway vpn.example.com
+          IPSec ID ExampleVpnHybrid
+          IKE Authmode hybrid
+          CA-Dir /etc/vpnc
+          or
+          CA-File /etc/vpnc/vpn-example-com.pem
+          IPSec secret HybS3cret?
+          Xauth username user@example.com
+          Xauth password 123456
+</pre>
+
+### Connect to the VPN
+
+#### Using TAP
+
+`$ sudo vpnc --ifmode tap ~/vpn/myvpn.conf`
+
+#### Using TUN
+
+The tun0 interface is destroyed by the shill service which automatically kills the "useless" connections. The solution is to enter the following commands before openvpn:
+
+```
+sudo stop shill
+sudo start shill BLACKLISTED_DEVICES=tun0
+sudo vpnc --ifmode tun ~/vpn/myvpn.conf
+```
+
+the BLACKLISTED_DEVICES tells shill to ignore the "tun0" device.
+
+
+Given a valid `~/vpn/myvpn.conf`, this will create a VPN tunnel that is shared by both the chroot and Chromium OS.
+
+### Update DNS
+
+> **Note:** You can skip this section if you're using vpnc 0.5.3r512-2 under Debian Jessie because that _automatically_ updates your DNS as you would expect.  See [issue #796](https://github.com/dnschneid/crouton/issues/796) for more information.
+
+The VPNC options for automatically updating DNS don't seem to work, so until someone finds an automatic solution for re-configuring DNS you'll have to do it manually. This can be accomplished by overwriting `/var/host/shill/resolv.conf` with a hard-coded version configured for your VPN. This can be automated by writing a simple shell script around the vpnc connect/disconnect. To preserve continuity of connectivity across VPN connects/disconnects, I recommend stashing away a copy of `resolv.conf` before overwriting during connect, and then restoring the stashed copy during disconnect.
+
+As with the VPN connection itself, `/var/host/shill/resolv.conf` is shared between the chroot and Chromium OS, so your DNS changes will take effect in both environments.
+
+[Here is an example bash script to connect to a cisco vpn, including backing up and overwriting dns on connect, and restoring dns on disconnect.](https://github.com/RaymiiOrg/df/blob/master/vpnc.sh)
+
+Alternatively, in /etc/rc.local:
+
+```
+mkdir -p /run/resolvconf/interface
+cp /etc/resolv.conf /run/resolvconf/resolv.conf
+mv /etc/resolv.conf /run/resolvconf/interface/mlan0
+ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+resolvconf --enable-updates
+```
+
+and then vpnc can update /etc/resolv.conf as the vpn goes up and down.
+
+
+### Disconnect from the VPN
+
+This is supposed to work:
+
+`$ sudo vpnc-disconnect`
+
+However, you may find that the vpn `tap` doesn't always want to go down gracefully, in which case you can try a more aggressive approach:
+
+`$ sudo pkill -9 vpnc`
+
+### Optionally Disable Wifi Power Management
+
+Chromium OS enables wifi power management by default, which will cause your wifi radio to turn off somewhat aggressively during short idle periods. This can be very inconvenient when using vpnc since there is no auto-reconnect, and especially if your particular VPN requires a token passcode on each connect. You may find it useful to disable wifi power manager while connected to the VPN to help stay connected. This can be accomplished via the `wireless-tools` package:
+
+`$ sudo apt-get install wireless-tools`
+
+Once installed, you can enable or disable wifi power management in your vpnc connect/disconnect scripts as follows:
+
+<pre>$ sudo iwconfig wlan0 power off
+$ sudo iwconfig wlan0 power on</pre>
+
+### Optionally Disable Chromium OS Power Management
+
+The same disclaimers apply if Chromium OS decides to put your Chromebook into sleep. You may want to look into the various options available to disable Chromium OS power management, such as [Caffeine](https://groups.google.com/forum/#!topic/chromebook-central/QORv0mDLts0), or using `croutonpowerd` as follows:
+
+Disable Chromium OS power management:<br>
+`$ croutonpowerd -i &`
+
+Enable Chromium OS power management (avoid killing the --daemon instance that was started by crouton):<br>
+`$ pkill -f croutonpowerd\ -i`
+
+##See also
+
+* [[Using Cisco AnyConnect VPN with openconnect]]
+
+If you want to use directly a ".ovpn" config file from the shell you can use the method described below:
+
+* [[Using-Cisco-AnyConnect-VPN-with-openconnect#solution-to-make-the-tun0-interface-stable-and-the-openvpn-command-reliable]]Once you have VirtualBox installed, you may notice that you are unable to access USB devices. This is because udev is running outside the crouton, and VBox is inside. Before this, you should get udev working based on [this wiki page](https://github.com/dnschneid/crouton/wiki/udev:-manage-inserted-devices).
+
+For those who don't know, Virtual Box handles USB access like so:  
+1. USB device plugged in  
+2. Udev rule (virtualbox.rules) is activated  
+3. Runs VBoxCreateUSBNode.sh (in /lib/udev/)  
+4. Creates /dev/vboxusb folder structure with USB device nodes  
+5. Sets permissions and root:vboxusers ownership  
+6. Virtual Box reads /dev/vboxusb  
+
+So there are 2 issues. First, udev expects the script at `/lib/udev/VBoxCreateUSBNode.sh`, it is at `/run/crouton/.../lib/udev/VBoxCreateUSBNode.sh`
+To fix this, copy the file out of the chroot.
+
+(For certain packages the path may be `/usr/share/virtualbox/VBoxCreateUSBNode.sh`)
+
+From inside the crouton
+
+    $ cp /lib/udev/VBoxCreateUSBNode.sh ~/Downloads/
+
+or (depending on the location of the file)
+ 
+    $ cp /usr/share/virtualbox/VBoxCreateUSBNode.sh ~/Downloads/
+
+Then from outside the chroot (chrome OS shell)  
+
+    $ sudo mv ~/Downloads/VBoxCreateUSBNode.sh /usr/local/
+    $ sudo chmod 755 /usr/local/VBoxCreateUSBNode.sh
+    $ sudo chown root:root /usr/local/VBoxCreateUSBNode.sh
+
+The second issue is that the group vboxusers does not exist outside the crouton, so we must set the group ownership based on GID, not group name.
+
+First, find the group ID of vboxusers
+
+    $ getent group vboxusers | awk -F: '{printf "Group %s with GID=%d\n", $1, $3}'
+    Group vboxusers with GID=126
+
+The 3-digit number is the GID. Mine was 126.
+
+Download this <https://gist.githubusercontent.com/Timvrakas/d43fe840d9fc336cae7b/raw/virtualbox.rules>
+and copy it to /etc/udev
+
+    $ sudo cp ~/Downloads/virtualbox.rules /etc/udev/rules.d/
+    $ sudo rm /etc/udev/rules.d/*-virtualbox.rules
+
+Now edit that file
+
+    $ nano /etc/udev/rules.d/virtualbox.rules
+
+change the 3-digit number at the end of the first two lines to the GID (ex: 126)
+
+Reload udev with newly created rule
+
+    $ udevadm control --reload
+
+Finally, add yourself to the `vboxusers` group.
+
+    $ sudo adduser `whoami` vboxusersFor the dozens of us (dozens!) who still prefer Window Maker's fast, efficient, and highly stable window manager, it is very easy to quickly install in crouton using x11.
+
+# Using WMaker in crouton 
+The below assumes you've installed crouton (your chromebook is in developer mode and you've followed instructions to install crouton):
+
+1. Install Crouton:
+`$ sudo install -Dt /usr/local/bin -m 755 ~/Downloads/crouton`
+2. Create a chroot with X11: 
+`$ sudo crouton -r sid -t x11 ` 
+(add the `-e` flag for encryption)
+3. Enter the chroot:  
+`$ sudo enter-chroot -n sid`
+4. Install wmaker:  
+`$ sudo apt-get install wmaker`
+5. Add `exec wmaker` to ~/.xinitrc:  
+`$ echo "exec wmaker" > ~/.xinitrc`
+6. Exit the chroot:
+`$exit`
+7. Launch wmaker directly from the crosh shell:  
+`$ sudo enter-chroot xinit`
+8. Create an alias for starting in wmaker:  
+add `alias startwmaker='sudo enter-chroot -n sid xinit'` to your `/home/chronos/user/.bashrc` (chromeos)
+
+### Helpful configurations
+
+* start xterm automatically by adding it to .xinitrc. Try `echo "xterm &" > ~/.xinitrc && echo "exec wmaker --no-clip --no-dock" >> ~/.xinitrc`
+* To get trackpad working install synaptic: `sudo apt-get install xserver-xorg-input-synaptics`
+* To edit your synaptic settings, visit https://wiki.archlinux.org/index.php/Touchpad_Synaptics#Disable_touchpad_while_typing
+* Dunst can be installed and configured to handle notifications for wmaker. Install `notification-daemon` and `libnotify4`.
+* To change configurations easily without installing too many other packages try: `WPrefs`
+
+
+----
+
+The intent of this page is to collect notes on using the ChromeOS wayland server from chroots.
+
+## Xwayland as a full-screen window (tested on xenial, ARM) ##
+### The how
+ - Install xwayland (apt-get install xwayland) and other X packages you want to run  
+ - Setup an .xinitrc for your desktop  
+ - host-wayland /usr/bin/xinit -- /usr/bin/Xwayland
+### The why or what
+You need to use full path to xinit because crouton's xinit wrapper would otherwise interfere.  
+Clipboard syncing doesnt work, might if you run the crouton solution for that, not tested.  
+Keyboard layouts work out of the box, even switching them in ChromeOS gets passed all the way to X.  
+Alt key gets stuck when you Alt-Tab in/out, remember to touch Alt after getting back in or weird things might happen.  
+Changing the X window size doesnt seem to be possible, atleast i didnt find a way. You can move it to a different screen with the Search-Alt-Arrows keys but it will stay the size of the primary display.
+
+## mpv (media player) wayland backend
+$ host-wayland mpv -vo wayland  
+There is no automatic rescaling or auto-fullscreen it seems, but you can use --autofit (eg. --autofit=1280 or adjust your screen width).
+
+## Qt applications ##
+ - Install qtwayland5 (apt-get install qtwayland5) and the Qt program you intend to run
+ - host-wayland *appname* -platform wayland
+
+Tested with qterminal
+
+## weston (wayland backend) with xwayland plugin
+ - install xwayland and weston
+ - host-wayland weston --backend=wayland-backend.so -Swayland-1 --modules=xwayland.so[Word Salad](https://github.com/10up/word-salad) is a Crouton target that installs a LEMP stack for local WordPress development.
+
+Simply install the target by following the instructions on the Word Salad README and start the chroot environment. Word Salad ships with:
+* Nginx
+* MySQL
+* PHP 7.0/php-fpm
+* Mailcatcher running on port 1025, accessible at http://localhost:1080
+* Memcached with PECL/Memcache for object caching
+
+Word Salad is currently tested only with the xenial release. Pull requests and issue reports are always welcome. Happy coding!crouton's clipboard synchronization architecture consists of the following components:
+ - extension: A Chromium extension that connects to a localhost websocket server (port 30001).
+   - If the server does not respond, it retries every 5 seconds.
+   - Once connected, it checks the server version, then listens for incoming commands.
+ - crouton-websocket: A websocket server (one process only, no matter how many instances of crouton are running).
+   - Accepts connections from extension. It technically supports multiple connection, but only the last connected client gets data.
+   - Reads data from a FIFO input pipe (`/tmp/crouton-websocket-in`), and forwards requests to the extension. Sends back data on a FIFO output pipe (`/tmp/crouton-websocket-out`).
+ - croutonclip (again, one process only): A script that monitors for VT change (x11), or active window change (xephyr), and copies around the clipboard data using either `xclip` or crouton-websocket FIFOs. Its design must be guaranteed to be safe, so that rapid X server rotations are processed in sequence.
+
+### Websocket/FIFO protocol
+
+Connection initialization:
+ - Version check: crouton-websocket sends `V2`, extension replies with `VOK`, or error (`E...`).
+
+Most commands are initiated from the chroot (via FIFO). crouton-websocket only does forwarding in this case). Commands are in the form `?<payload>`, and replies must either be `?<reply>`, in case of success, or `E...` in case of error. Only replies in these formats are written back to the FIFO (crouton-websocket blocks until such a reply is receied).
+
+ - `E<message>`: Errors, can be sent directly from crouton-websocket (i.e., extension not connected), or from the extension itself.
+ - `W<payload>`: Write (or paste to Chromium). Reply: `WOK`.
+ - `R`: Read (or copy from Chromium). Reply: `R<payload>`.
+ - `P<payload>`: Ping. Reply: `P<payload>`.
+ - `U<url>`: Open URL in Chromium. Reply: `UOK`.
+ - `X<:display>`: Ask the extension to open a Kiwi window. Reply: `XOK`.
+ - `N<payload>`: Raise a notification in Chromium OS. Reply: `NOK`.
+
+Commands initiated from the extension. Those commands are handled directly in crouton-websocket, and not passed down to the FIFO. These commands can be interleaved with respect to chroot-initiated commands, and must not have a length greater than 4095 bytes (including command character).
+
+ - `Cl`: Executes a `croutoncycle l` command. crouton-websocket replies with `C<command output>`
+ - `C<cmd>`: Executes a `croutoncycle <cmd>` command. crouton-websocket replies with `C`.
+
+The websocket protocol is frame-based, so the payload is guaranteed to be transmitted atomically: no incomplete reads/writes. There is no maximum frame length (up to 2**63 bytes...).
+
+FIFOs are a bit trickier to handle, as atomicity is only guaranteed for packets up to 4096 bytes (`PIPE_BUF` value on Linux, see `man 7 pipe`), and multiple writes may still appear as a single command (e.g. if croutonclip write `Wa` then `Wb`, and the server is busy at the time the first command arrives, it may erroneously read `WaWb`). One could include the packet size after the `W`, but that would increase croutonclip's complexity (remember: it's shell...).
+
+To circumvent this problem, croutonclip must behave as follows:
+ - Write data to the FIFO input pipe
+ - Read ack/data from the FIFO output pipe.
+
+We also need to make sure that only one process communicates with the server at a time: this can be done by `flock`ing a lock, but it is currently unnecessary as there is only one instance of croutonclip.
+
+On the server side, the FIFO input pipe is in blocking mode: `read` only returns 0 upon EOF (croutonclip is done writing). Ack/data is then written to the output pipe. To prevent from blocking forever if croutonclip does not read the pipe, the server only tries to write the data for 3 seconds. croutonclip should also probably timeout.EDIT: The procedure below no longer works: VideoLan has withdrawn the links! The only way (or at least the easiest way) is to install libdvd-pkg. This works for xenial and stretch; unfortunately, the package is not available in trusty. You can add xenial sources to trusty, pin them at 100, and then execute:
+
+`sudo apt-get install libdvd-pkg/xenial`
+
+What this does, is downloads the libdvdcss-2 code, and compiles it using only dependencies from trusty, thus not messing up your trusty install.
+
+
+***
+
+
+The following procedure should work for any debian or ubuntu release. Go to the following page:
+
+[https://www.videolan.org/developers/libdvdcss.html](https://www.videolan.org/developers/libdvdcss.html)  
+
+Follow the instructions to add 2 new lines to your `/etc/apt/sources.list` and then download the verification key. If you have the crouton extension, you can easily copy and paste to accomplish this.
+
+The only trick is knowing the proper package name. Here is what you need to do after installing the key:  
+
+    sudo apt-get update  
+    sudo apt-get install libdvdcss2  
+
+And now you're done!Ratpoison is a very fast, low resource, lightweight Window Manager with very few or no library dependencies, and no fancy window decorations. It is a nice alternative to i3, awesome, or other tiling window managers, particularly for those using older hardware, such as older netbooks or low resource chromebooks.
+
+It is very easy to install and set up Ratpoison in your chromebook using crouton
+
+# Using Ratpoison in crouton 
+
+1. Create a chroot with X11:  
+`$ sudo sh ~/Downloads/crouton -r sid -t x11 `
+2. Enter the chroot:  
+`$ sudo enter-chroot -n sid`
+3. Install ratpoison:  
+`$ sudo apt-get install ratpoison ratmenu`
+4. Add `exec ratpoison` to ~/.xinitrc:  
+`$ echo "exec ratpoison" > ~/.xinitrc`
+5. Launch Ratpoison directly from the crosh shell:  
+`$ sudo enter-chroot xinit`
+6. Create an alias for starting in Ratpoison:  
+add `alias startratpoison='sudo enter-chroot -n sid xinit'` to your `/home/chronos/user/.bashrc` (chromeos)
+
+### Helpful configurations
+
+* Remember, all keystrokes with ctrl-t -- i.e., holding down the control key and pressing "t".
+* Ctrl-t n shifts to the next window. Ctrl-t p shifts to the previous window. Users of `screen' will find keybindings to be intuitive. For example, ctrl-t s splits the current frame into two vertical ones (ctrl-t S (capital S) splits it into two horizontal ones). Ctrl-t Q makes the current frame the only one.
+* In the event that you want to abort out of a ctrl-t, press ctrl-g
+* Ctrl-t ? will bring up a brief list of sequences
+* A quick tutorial for Ratpoison Keybindings can be found at https://en.wikibooks.org/wiki/Using_Ratpoison/Your_first_steps
+
+
+----
+

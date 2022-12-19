@@ -1,0 +1,241 @@
+So far, it looks like even a novice can get linux going on the ASUS C200 (4G 32G-SSD). I'm offering these comments in case they help others who want to take the plunge and turn their ASUS C200 into a portable linux machine.
+
+The only problem I seemed to have when installing was the software center. I noticed an error message that included "software center failed to setup dbs". And once I was on the desktop the software center was missing stuff (e.g. LibreOffice and Wine).  But that was easy to fix, after googling I found these commands which fixed the software center:    sudo apt-get update     and then   sudo apt-get install software-center*     
+
+In case it helps other rookies: after a powerwash [esc-refresh, then touch power button; ctrl-d twice] , I got into developer's mode (15 minutes), then got the crouton extension [crouton integration at google play]  and downloaded crouton . To install ubunutu, I used 
+ sudo sh ~/Downloads/crouton -e -r trusty -t xfce,xfce-desktop,xiwi 
+I was unsure about using the commas for multiple targets, but it seemed to work.
+
+Getting skype to work was a chore; in software manager Edit/Software Sources/Other Software/Add
+deb http://archive.canonical.com/ubuntu trusty partner  
+After that I tried sudo-apt update  -- no sign of skype   and then  sudo-apt upgrade   -- still no sign of skype
+But then I tried to install the command line and it worked.   sudo apt-get install skype
+
+Sometimes we want fullscreen instead of running in a tab (no hardware acceleration), so from the crouton command sheet we have:  Switch between xorg and xiwi if both installed: sudo startxfce4 -X xiwi or sudo startxfce4 -X xorg  
+
+I figured I did not have xorg installed (it was not one of my targets), so I got it using an update. First I 
+backed up my chroot        sudo edit-chroot -b trusty      which took quite a while
+then I did the update/add new target: sudo sh ~/Downloads/crouton -u -n trusty -t xorg        I bet there was a way to simply add the target to my chroot (I should have tried sudo sh ~/Downloads/crouton -n trusty -t xorg )
+
+that took a while (lots of messages saying it was already the latest version), but I did end up being able to do either  sudo startxfce4 -X xiwi or sudo startxfce4 -X xorg
+
+A final point for now: I just stumbled on the advice  "Stay away from the Ubuntu Software manager, and use the command line. See Ubuntu's AptGet/Howto."  I wonder if that means stay away from Ubuntu's Software Center? hmm ...
+
+
+# Model
+
+* Acer Aspire C730 (11.6 inch) Chromebook Celeron (N2840) 2.16GHz 4GB 32GB
+
+# Success 
+
+* So far, my experience with Crouton has been positive with this device.
+
+# Usage
+The code provided in the main instructions doesn't work with the ASUS Chromebook Flip C100PA.
+
+The instructions provided under [Usage](https://github.com/dnschneid/crouton#usage) are:
+
+`sudo install -Dt /usr/local/bin -m 755 ~/Downloads/crouton`
+
+This code results in the error message:
+
+`install: cannot stat '/root/Downloads/crouton': No such file or directory`
+
+This code worked for me:
+
+`sudo install -Dt /usr/local/bin -m 755 home/chronos/user/Downloads/crouton`The Asus C201 is a new, inexpensive, ARM-based chromebook that clocks in at one of the most affordable chromebooks manufactured to date.  As of July 2015, the computer costs $169 on Amazon.com, making it an extremely appealing option for those on a very tight budget.
+
+Being an ARM-based machine, it is prone to significantly more hurdles than its Intel-driven counterparts.  This article is meant to be a repository for out-of-the-box distribution/target combination testing, to give potential buyers an idea of which environments will work and which ones will not.
+
+Additionally, this can be used as a jumping off point for improvements to the support coverage on ARM based machines.
+
+The ASUS C201 does not work "out of the box" with versions of Ubuntu less than "trusty". To install run the following:
+
+ - `sudo install -Dt /usr/local/bin -m 755 ~/Downloads/crouton` 
+ - `sudo crouton -r trusty -t xfce`
+
+And to start xfce:
+`sudo startxfce4`
+
+#x11 Does not find any screens/fbdev not found
+
+If you have an earlier chroot than "trusty" ("precise" is currently built in as the default Ubuntu fetch in Crouton) then you must run the following commands before running 'enter-chroot startxfce4', every time you run it.<br>
+`sudo enter-chroot`<br>
+`sudo rm /dev/dri/card0`<br>
+`sudo mv /dev/dri/card1 /dev/dri/card0`
+
+I now have debian jessie up and running with no tabs open except crosh. When Jessie is running i have about 1.2 gigs left of RAM. Plenty fast too.
+
+(I did not need to do the above. Running ubuntu trusty with xfce, xiwi.)
+
+# Target compatibility
+todo
+
+# Notes
+- Ubuntu Vivid works fine too. You need it to get more recent versions of Emacs from the repositories. Browsing is a bit slow on Chromium but Emacs flies on this machine of course. Overall I get a 2% to 8% CPU usage. Battery life is ridiculously high. 15 hours or more.The Pixel is fully supported by crouton with only a few minor caveats you need to keep in mind.
+
+When issuing the command to build your chroot, you will want to add `-t touch` to your command. If you are adding a desktop environment target such as Xfce or Unity, you can combine it with touch via something like `-t touch,xfce`.
+
+Be aware that until your favorite window manager supports high-DPI displays, results may vary.  Users are having good luck using Xfce with a few minor tweaks:
+
+#### Option #1 - Use X11's `-dpi` flag:
+
+ 1. `sudo enter-chroot`
+ 2. Copy /etc/crouton/xserverrc-local.example to /etc/crouton/xserverrc-local, uncomment the XARGS line and modify the DPI value.
+
+
+#### Option #2 change dpi settings in Xfce:
+Support for dpi changes are quite spotty... but this way you get to keep text sharp.
+
+ 1. In Xfce, right-click the desktop and choose Desktop Settings.
+ 2. In Icons tab, increase the icon size. Recommended: 72.
+ 3. Close the window.
+ 4. Right-click the desktop and choose Applications > Settings > Appearance.
+ 5. In the Icons tab, select Humanity, Humanity-Dark, or Tango. GNOME icons are not resolution independent.
+ 6. In Fonts tab, enable Custom DPI and set it to 150, or adjust to your liking.
+ 7. Close window.
+ 8. Right-click the desktop and choose Applications > Settings > Panel.
+ 9. Use the slider to increase the size of the panel.  Recommended for ease of touch: 72.
+ 10. Close the window.
+ 11. Get a HiDPI Window Manager theme (https://github.com/mntmn/xfce4-hidpi-theme)
+ 12. Extract in /usr/share/themes/
+ 13. Enable it: Applications > Settings > Window Manager .
+ 14. Switch the GTK style: Applications > Settings > Appearance > Style .
+
+This should give you an interface normal humans are capable of working with. If you have any more tips, please share them!
+
+#### Option #3 change resolution
+Trades the extreme definition for a more standard resolution that works perfectly with any window manager.  You can use the included `setres` script to change your resolution to something custom.  The script does not do sanity-checking, so you may end up with a blank screen and have to kill the chroot from Chromium OS if you give a strange resolution. Some examples:
+```
+setres 1920 1280
+setres 1680 1120
+setres 1440 960
+setres 1280 850
+```
+You can make one of these resolutions persistent by following these steps:
+
+1. Generate a modeline:
+```
+cvt 1920 1280 60
+```
+It will output something like:
+```
+Modeline "1920x1280_60.00"  206.25  1920 2056 2256 2592  1280 1283 1293 1327 -hsync +vsync
+```
+
+2. Create a 10-monitor.conf file:
+```
+sudo vim /usr/share/X11/xorg.conf.d/10-monitor.conf
+```
+
+You should get something like this:
+```
+Section "Monitor"
+  Identifier "Monitor0"
+  Modeline "1920x1280_60.00"  206.25  1920 2056 2256 2592  1280 1283 1293 1327 -hsync +vsync
+EndSection
+Section "Screen"
+  Identifier "Screen0"
+  Device "eDP1"
+  Monitor "Monitor0"
+  DefaultDepth 24
+  SubSection "Display"
+    Depth 24
+    Modes "1920x1280_60.00" "1280x960"
+  EndSubSection
+EndSection
+```
+
+If you want a different screen resolution, replace the Modeline line with the one generated by `cvt` for you, and add the mode to the Modes line.
+
+#### Option #4 set screen size on Xorg so that dpi goes up to 240
+
+Add a file /etc/X11/xorg.conf.d/90-monitor.conf to explicitly set the screen size, i.e. containing
+
+```
+Section "Monitor"
+    Identifier             "<default monitor>"
+    DisplaySize            270 180    # In millimeters
+EndSection
+```
+
+These numbers are actually taken from the Xorg log file in /var/log -- no clear to me why the correct numbers don't end up being used.  Not all apps handle this correctly
+
+#### Gnome and Unity Troubleshooting
+Sometimes when running in {gnome,unity}-xiwi, your session may get stuck with a dialog box complaining about the followings
+```
+   Could not apply the stored configuration for monitors
+   none of the selected modes were compatible with the possible modes:
+   Trying modes for CRTC 63
+   CRTC 63: trying mode 1024x768@85Hz with output at 2200x1508@60Hz (pass 0)
+   CRTC 63: trying mode 2048x1536@85Hz with output at 2200x1508@60Hz (pass 0)
+   CRTC 63: trying mode 2048x1536@75Hz with output at 2200x1508@60Hz (pass 0)
+   CRTC 63: trying mode 2048x1536@60Hz with output at 2200x1508@60Hz (pass 0)
+   CRTC 63: trying mode 1920x1440@85Hz with output at 2200x1508@60Hz (pass 0)
+   CRTC 63: trying mode 1920x1440@75Hz with output at 2200x1508@60Hz (pass 0)
+   ... 
+```
+The solution (found here http://ubuntuforums.org/showthread.php?t=1852813) is to simply remove your ~/.config/monitors.xml.
+
+```
+   sudo enter-chroot
+   mv .config/monitors.xml .config/monitors.xml.bkp
+```
+
+Then restart your session.
+
+### HiDPI In XiWi Window
+
+If you start one single application in XiWi window like this:
+
+    sudo startxiwi -n chroot_name app_name
+
+To support HiDPI in your application window, you need to:
+
+1. Check HiDPI in your "Crouton Integration" extension. (By doing this alone, the font will be super small).
+
+2. Edit your chroot:
+```
+    sudo enter-chroot
+    sudo vi /etc/crouton/xserverrc-xiwi
+    add "-dpi 135x135" at the end of XARGS line.
+```
+
+Start your application again with startxiwi. Notice that the setting will be reset every time you update your chroot. Backup the file and re-do it after every update...
+
+NB. On my machine, this generated an X server error with unknown option "-dpi 135x135". According to the options list, this should be an integer value but even so I couldn't get it to work. Easiest is to set the resolution and font sizes in Xcfe appearance menus, as described above, using the graphical tool to get the display resolution correct. Then any application should display fine _without_ needing to have the HiDPI option checked in the extension.  
+
+## Installing the latest version of Blender
+The 2015 Pixel Chromebook is a beast even by today's (2018) standards. At the time, everyone wondered what the point of all ridiculous amount of RAM and processor speed was. Now we know.  :-)
+
+By default, the Blender that ships with an LTS version of ubuntu (xenial at present) is several versions out of date, and all the cool stuff that you so desperately need isn't there, right?  ;-)
+
+So, you first need to enable PPA to get repo with the latest blender:
+
+`sudo apt-get update && sudo apt-get install python-software-properties` 
+
+You may also need to install:
+
+`sudo apt-get install software-properties-common`
+
+Now you can add Thomas' personal repo for blender:
+
+`sudo add-apt-repository ppa:thomas-schiex/blender`
+
+Finally you need to update and install blender:
+
+`sudo apt update && sudo apt install blender`
+
+And you should have the latest version:
+
+`(xenial)xxxx@localhost:~$ blender -v`
+
+`Blender 2.80 (sub 45)`
+
+Now, get ~on with some work~ modelling and rendering!
+
+Have to share what a great experience I am having with e17. It is fast and low footprint. And lives up to the billing of being beautiful. Hand in hand with Crouton, it makes running Precise in a chroot a magical experience. In case you're wondering which desktop target to experiment with, I recommend it without reservation. And I had never used it before in several years of using various distros.
+
+It's a short learning curve and well worth your time and energy.
+
+Forgot to mention that I added the e17 target on top of xfce4 and they play nicely in the same chroot.
