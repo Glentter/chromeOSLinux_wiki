@@ -1,135 +1,136 @@
-Mon Jan 23 13:38:16 PST 2023
-Mon Jan 23 13:38:16 PST 2023
+.
+|-- ./Accessories
+|   |-- ./Accessories/(CIF001)-Sample-.bashrc-file-for-crouton.md
+|   |-- ./Accessories/Access-your-external-CD-ROM.md
+|   |-- ./Accessories/Atom-(the-editor).md
+|   |-- ./Accessories/Autostart-crouton-chroot-at-ChromeOS-startup.md
+|   |-- ./Accessories/acc.txt
+|   `-- ./Accessories/awesome.md
+|-- ./Chromebooks
+|   |-- ./Chromebooks/ASUS-C200.md
+|   |-- ./Chromebooks/Acer-C710-(all-models).md
+|   |-- ./Chromebooks/Acer-C720-C720P.md
+|   |-- ./Chromebooks/Acer-C730.md
+|   |-- ./Chromebooks/Asus-C100PA.md
+|   |-- ./Chromebooks/Asus-C201.md
+|   |-- ./Chromebooks/CB.txt
+|   |-- ./Chromebooks/Chromebook-Pixel.md
+|   `-- ./Chromebooks/Enlightenment-Desktop-E17-on-Precise-on-Samsung-Chromebook.md
+|-- ./Developer
+|   |-- ./Developer/Debian.md
+|   |-- ./Developer/Firmware-for-your-Linux-install.md
+|   |-- ./Developer/Fix-error-while-loading-shared-libraries:-libQt5Core.so.5.md
+|   |-- ./Developer/Format-external-storage.org
+|   |-- ./Developer/Integrate-Crosh-Shell-Vim-Clipboard-With-Chrome-OS-Clipboard.md
+|   |-- ./Developer/Juniper-Junos-Pulse-VPN-with-OpenConnect.md
+|   |-- ./Developer/LXDE-no-session-for-pid.md
+|   |-- ./Developer/LXDE-tweaks-for-smooth-sailing.md
+|   |-- ./Developer/LyX-with-HiDPI.md
+|   |-- ./Developer/QEMU-(Ubuntu-Server).md
+|   |-- ./Developer/Reducing-the-load-from-the-ChromeOS-chrome-processes.md
+|   |-- ./Developer/Repacking-a-kernel.md
+|   |-- ./Developer/Running-servers-in-crouton.md
+|   |-- ./Developer/Scripts-to-recover-VirtualBox-environment-after-CrOS-updates-(tarball).md
+|   |-- ./Developer/Security.md
+|   |-- ./Developer/Sommelier-(A-more-native-alternative-to-xiwi).md
+|   |-- ./Developer/Using-Cisco-AnyConnect-VPN-with-openconnect.md
+|   |-- ./Developer/VNC-Server.md
+|   |-- ./Developer/VPNC.md
+|   |-- ./Developer/VirtualBox-udev-integration.md
+|   |-- ./Developer/WMaker.md
+|   |-- ./Developer/Wayland-Notes.md
+|   |-- ./Developer/Word-Salad:-Target-for-local-WordPress-development.md
+|   |-- ./Developer/crouton\ extension:\ websocket\ architecture.md
+|   |-- ./Developer/dev.txt
+|   |-- ./Developer/libdvdcss-simple-install.md
+|   `-- ./Developer/ratpoison.md
+|-- ./Image_tools
+|   |-- ./Image_tools/2-xenial-or-not-2-xenial,-that-is-the-question.md
+|   |-- ./Image_tools/3-Steps-to-Install-Bionic-Beaver.md
+|   |-- ./Image_tools/5-Work-Arounds-for-the-LXDE-Problem:-No-session-for-pid.md
+|   |-- ./Image_tools/A-couple-of-steps-to-get-Kali-Rolling-with-Xfce-running-(on-x86_64-devices).md
+|   |-- ./Image_tools/Adding-Crouton-Icons-to-the-shelf-(WIP).md
+|   |-- ./Image_tools/Build-chrome-os-kernel-and-kernel-modules.md
+|   |-- ./Image_tools/Build-kernel-headers-and-install-Virtualbox-(x86).md
+|   |-- ./Image_tools/Building-packages-from-source.md
+|   |-- ./Image_tools/Enable-kernel-VT_x-for-Virtualbox.md
+|   |-- ./Image_tools/How-To-Install-To-External-Drive.md
+|   |-- ./Image_tools/How-to-install-software-within-your-Crouton-Ubuntu.md
+|   |-- ./Image_tools/How-to-mount-network-shares-on-Chromebook-(sshfs,-cifs,-nfs-etc).md
+|   |-- ./Image_tools/Kali.md
+|   |-- ./Image_tools/Picky-Picky-lxde.md
+|   |-- ./Image_tools/Steps-to-setup-Focal-Fossa-on-Crouton.md
+|   |-- ./Image_tools/Ubuntu.md
+|   |-- ./Image_tools/Xenial-Minimal-Install.md
+|   |-- ./Image_tools/[FIX]-Help!-I-can-no-longer-install-or-boot-crouton-from-USB-or-MicroSD!.md
+|   |-- ./Image_tools/bootstrap-files:-how-to-download-and-install-from.md
+|   |-- ./Image_tools/crouton:-favorite-release-target-combos----top-3-choices.md
+|   |-- ./Image_tools/image.txt
+|   `-- ./Image_tools/sudo-startxfce4-not-opening-Linux.md
+|-- ./LICENSE
+|-- ./Multimedia
+|   |-- ./Multimedia/3D-Hardware-acceleration.md
+|   |-- ./Multimedia/Access-audio-hardware-directly-(ALSA,-JACK).md
+|   |-- ./Multimedia/Access-your-sound-card-with-alsamixer.md
+|   |-- ./Multimedia/Audio.md
+|   |-- ./Multimedia/Disable-(or-enable!)-pulseaudio-easily.md
+|   |-- ./Multimedia/Full-Blown-Audio-Video-Workstation-using-KDE-chroot-and-KXStudio.md
+|   |-- ./Multimedia/Ripping-CDs.md
+|   |-- ./Multimedia/Route-JACK-through-CRAS.md
+|   |-- ./Multimedia/Using-JACK-for-SimpleScreenRecorder.md
+|   `-- ./Multimedia/mm.md
+|-- ./README.md
+|-- ./Utility
+|   |-- ./Utility/Access-external-drive-from-crouton.md
+|   |-- ./Utility/Avoid-Data-Corruption:-Turn-Off-Sleep-Mode.md
+|   |-- ./Utility/Backups.md
+|   |-- ./Utility/CLI-Crouton-Installation.md
+|   |-- ./Utility/CLI-Development-Environment.md
+|   |-- ./Utility/CLI-Terminal-Window-Setup.md
+|   |-- ./Utility/Change-Chroot-User-Password.md
+|   |-- ./Utility/Common-issues-and-reporting.md
+|   |-- ./Utility/Community-Links.md
+|   |-- ./Utility/Create-shortcuts-for-your-chroots.md
+|   |-- ./Utility/Crouton-Command-Cheat-Sheet.md
+|   |-- ./Utility/Crouton-scanning-with-SANE-Epson-Perfection-2480.md
+|   |-- ./Utility/Deleting-tun[123...]-devices.md
+|   |-- ./Utility/Determine-which-xscreensaver-"hack"-is-crashing-your-chroot.md
+|   |-- ./Utility/Dropbox.md
+|   |-- ./Utility/Fonts.md
+|   |-- ./Utility/Home.md
+|   |-- ./Utility/Installing-Crouton.md
+|   |-- ./Utility/Installing-Oracle-JDK.md
+|   |-- ./Utility/Keyboard.md
+|   |-- ./Utility/Kodi-Media-Center.md
+|   |-- ./Utility/Languages.md
+|   |-- ./Utility/Latest-Awesome-WM-with-Awesome-Copycat-Killers-themes-on-Ubuntu-14.04.md
+|   |-- ./Utility/Mail.md
+|   |-- ./Utility/Power-manager-overrides.md
+|   |-- ./Utility/Printing.md
+|   |-- ./Utility/SME-Storage-Made-Easy-package-installation-for-local-access.md
+|   |-- ./Utility/Screencasting-on-a-Chromebook.md
+|   |-- ./Utility/Setting-Up-Cron-Job.md
+|   |-- ./Utility/Sharing-files-and-folders.md
+|   |-- ./Utility/Shutting-Down-Safely.md
+|   |-- ./Utility/Upgrade-chroot-release.md
+|   |-- ./Utility/Word-of-Warning-About-This-Wiki-(Global-Warning-LOL).md
+|   |-- ./Utility/chroots:-change-the-default-install-location.md
+|   |-- ./Utility/crouton-in-a-Chromium-OS-window-(xiwi).md
+|   |-- ./Utility/get-crouton-awesome.sh.md
+|   |-- ./Utility/i3.md
+|   |-- ./Utility/screencasting.png
+|   |-- ./Utility/udev:-manage-inserted-devices.md
+|   `-- ./Utility/util.txt
+|-- ./issues
+|   `-- ./issues/broken.md
+|-- ./smes-images
+|   |-- ./smes-images/1a.png
+|   |-- ./smes-images/1b.png
+|   |-- ./smes-images/2.png
+|   |-- ./smes-images/3.png
+|   |-- ./smes-images/4.png
+|   |-- ./smes-images/5.png
+|   `-- ./smes-images/6.png
+`-- ./tree.txt
 
-|-- 1multimedia
-|   |-- 3D-Hardware-acceleration.md
-|   |-- Access-audio-hardware-directly-(ALSA,-JACK).md
-|   |-- Access-your-sound-card-with-alsamixer.md
-|   |-- Audio.md
-|   |-- Disable-(or-enable!)-pulseaudio-easily.md
-|   |-- Full-Blown-Audio-Video-Workstation-using-KDE-chroot-and-KXStudio.md
-|   |-- Ripping-CDs.md
-|   |-- Route-JACK-through-CRAS.md
-|   |-- Using-JACK-for-SimpleScreenRecorder.md
-|   `-- mm.md
-|-- README.md
-|-- accessories
-|   |-- (CIF001)-Sample-.bashrc-file-for-crouton.md
-|   |-- Access-your-external-CD-ROM.md
-|   |-- Atom-(the-editor).md
-|   |-- Autostart-crouton-chroot-at-ChromeOS-startup.md
-|   `-- acc.txt
-|-- chromebooks
-|   |-- ASUS-C200.md
-|   |-- Acer-C730.md
-|   |-- Asus-C100PA.md
-|   |-- Asus-C201.md
-|   |-- CB.txt
-|   |-- Chromebook-Pixel.md
-|   `-- Enlightenment-Desktop-E17-on-Precise-on-Samsung-Chromebook.md
-|-- developer
-|   |-- Debian.md
-|   |-- Firmware-for-your-Linux-install.md
-|   |-- Fix-error-while-loading-shared-libraries:-libQt5Core.so.5.md
-|   |-- Format-external-storage.org
-|   |-- Integrate-Crosh-Shell-Vim-Clipboard-With-Chrome-OS-Clipboard.md
-|   |-- Juniper-Junos-Pulse-VPN-with-OpenConnect.md
-|   |-- LXDE-no-session-for-pid.md
-|   |-- LXDE-tweaks-for-smooth-sailing.md
-|   |-- LyX-with-HiDPI.md
-|   |-- QEMU-(Ubuntu-Server).md
-|   |-- Reducing-the-load-from-the-ChromeOS-chrome-processes.md
-|   |-- Repacking-a-kernel.md
-|   |-- Running-servers-in-crouton.md
-|   |-- Scripts-to-recover-VirtualBox-environment-after-CrOS-updates-(tarball).md
-|   |-- Security.md
-|   |-- Sommelier-(A-more-native-alternative-to-xiwi).md
-|   |-- Using-Cisco-AnyConnect-VPN-with-openconnect.md
-|   |-- VNC-Server.md
-|   |-- VPNC.md
-|   |-- VirtualBox-udev-integration.md
-|   |-- WMaker.md
-|   |-- Wayland-Notes.md
-|   |-- Word-Salad:-Target-for-local-WordPress-development.md
-|   |-- crouton\ extension:\ websocket\ architecture.md
-|   |-- dev.txt
-|   |-- libdvdcss-simple-install.md
-|   `-- ratpoison.md
-|-- image_tools
-|   |-- 2-xenial-or-not-2-xenial,-that-is-the-question.md
-|   |-- 3-Steps-to-Install-Bionic-Beaver.md
-|   |-- 5-Work-Arounds-for-the-LXDE-Problem:-No-session-for-pid.md
-|   |-- A-couple-of-steps-to-get-Kali-Rolling-with-Xfce-running-(on-x86_64-devices).md
-|   |-- Adding-Crouton-Icons-to-the-shelf-(WIP).md
-|   |-- Build-chrome-os-kernel-and-kernel-modules.md
-|   |-- Build-kernel-headers-and-install-Virtualbox-(x86).md
-|   |-- Building-packages-from-source.md
-|   |-- Enable-kernel-VT_x-for-Virtualbox.md
-|   |-- How-To-Install-To-External-Drive.md
-|   |-- How-to-install-software-within-your-Crouton-Ubuntu.md
-|   |-- How-to-mount-network-shares-on-Chromebook-(sshfs,-cifs,-nfs-etc).md
-|   |-- Picky-Picky-lxde.md
-|   |-- Steps-to-setup-Focal-Fossa-on-Crouton.md
-|   |-- Ubuntu.md
-|   |-- Xenial-Minimal-Install.md
-|   |-- [FIX]-Help!-I-can-no-longer-install-or-boot-crouton-from-USB-or-MicroSD!.md
-|   |-- bootstrap-files:-how-to-download-and-install-from.md
-|   |-- crouton:-favorite-release-target-combos----top-3-choices.md
-|   |-- image.txt
-|   `-- sudo-startxfce4-not-opening-Linux.md
-|-- smes-images
-|   |-- 1a.png
-|   |-- 1b.png
-|   |-- 2.png
-|   |-- 3.png
-|   |-- 4.png
-|   |-- 5.png
-|   |-- 6.png
-|   |-- Acer-C710-(all-models).md
-|   |-- Acer-C720-C720P.md
-|   |-- Kali.md
-|   `-- awesome.md
-|-- tree.txt
-`-- utility
-    |-- Access-external-drive-from-crouton.md
-    |-- Avoid-Data-Corruption:-Turn-Off-Sleep-Mode.md
-    |-- Backups.md
-    |-- CLI-Crouton-Installation.md
-    |-- CLI-Development-Environment.md
-    |-- CLI-Terminal-Window-Setup.md
-    |-- Change-Chroot-User-Password.md
-    |-- Common-issues-and-reporting.md
-    |-- Community-Links.md
-    |-- Create-shortcuts-for-your-chroots.md
-    |-- Crouton-Command-Cheat-Sheet.md
-    |-- Crouton-scanning-with-SANE-Epson-Perfection-2480.md
-    |-- Deleting-tun[123...]-devices.md
-    |-- Determine-which-xscreensaver-"hack"-is-crashing-your-chroot.md
-    |-- Dropbox.md
-    |-- Fonts.md
-    |-- Home.md
-    |-- Installing-Crouton.md
-    |-- Installing-Oracle-JDK.md
-    |-- Keyboard.md
-    |-- Kodi-Media-Center.md
-    |-- Languages.md
-    |-- Latest-Awesome-WM-with-Awesome-Copycat-Killers-themes-on-Ubuntu-14.04.md
-    |-- Mail.md
-    |-- Power-manager-overrides.md
-    |-- Printing.md
-    |-- SME-Storage-Made-Easy-package-installation-for-local-access.md
-    |-- Screencasting-on-a-Chromebook.md
-    |-- Setting-Up-Cron-Job.md
-    |-- Sharing-files-and-folders.md
-    |-- Shutting-Down-Safely.md
-    |-- Upgrade-chroot-release.md
-    |-- Word-of-Warning-About-This-Wiki-(Global-Warning-LOL).md
-    |-- chroots:-change-the-default-install-location.md
-    |-- crouton-in-a-Chromium-OS-window-(xiwi).md
-    |-- get-crouton-awesome.sh.md
-    |-- i3.md
-    |-- screencasting.png
-    |-- udev:-manage-inserted-devices.md
-    `-- util.txt
-
-7 directories, 123 files
+8 directories, 125 files
