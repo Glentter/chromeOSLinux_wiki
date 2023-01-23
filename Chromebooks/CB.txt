@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 So far, it looks like even a novice can get linux going on the ASUS C200 (4G 32G-SSD). I'm offering these comments in case they help others who want to take the plunge and turn their ASUS C200 into a portable linux machine.
 
 The only problem I seemed to have when installing was the software center. I noticed an error message that included "software center failed to setup dbs". And once I was on the desktop the software center was missing stuff (e.g. LibreOffice and Wine).  But that was easy to fix, after googling I found these commands which fixed the software center:    sudo apt-get update     and then   sudo apt-get install software-center*     

@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 EDIT: This how-to has been updated to include more information and to be more helpful. Why bother to upgrade? Xenial is getting out of date. It used to have X-accel but seemingly no more, so I have to use x11 in mplayer. But in bionic, I can use xv. You may wish to consider installing Ubuntu's latest LTS, focal. I'm currently using it, it's great so far, and requires no special tricks to install.
 
 ***

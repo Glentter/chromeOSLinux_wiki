@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 If you like Atom (the editor) it is easy to run it on a Chromebook. It runs both in a graphic environment and in a browser tab. I tested on an HP Chromebook 13 and on an Asus Chromebox M085U.
 
 # Installation

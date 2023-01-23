@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 **source of information:** https://www.chromium.org/chromium-os/packages/power_manager
 
 **powerd:** user-space daemon running as the "power" user that initiates dimming the screen, suspending the system, etc.

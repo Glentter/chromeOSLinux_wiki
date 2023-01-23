@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 Although shutting down ChromeOS with an active chroot may work, it isn't recommended. Chroots on SD cards are particularly susceptible to corruption.
 
 To cleanly umount the chroot, first logoff/exit any graphical environment you are running (how to do this depends on the graphical environment, although switching back to the Crouton tab and hitting <kbd>CTRL-C</kbd> should normally work if your chroot is running in the foreground), then type `exit`. You should see something like this.

@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
     # Put your fun stuff here.
     alias remount="sudo mount -o remount,dev,exec,symfollow /media/removable/Data/"
     alias do-remount="sudo mount -o remount,dev,exec,symfollow $1"

@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 ## Just a simple tutorial to install A Chroot environment to USB or SD card
 
 * Step 1 - Format SD/USB 

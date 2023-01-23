@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 Most issues can be fixed by downloading a fresh installer, and updating your chroot:
 
  1. Remove any existing installer from your `Downloads` folder.

@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 > Some steps are from George Smart's blog and SANE website.
 
 1.  install packages:  

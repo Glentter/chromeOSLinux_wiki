@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 Theoretically, you can install any target with any release. But not all combinations work equally well. Here is what I've discovered:
 
 1. -r trusty -t lxde

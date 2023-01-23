@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 It is not necessary to run Asunder as root: just add your username to the cd-rom group, then restart your chroot. Likewise, add your username to hwaudio to gain control over audio hardware. Thanks, James
 
 # Ripping CDs on a Chromebook

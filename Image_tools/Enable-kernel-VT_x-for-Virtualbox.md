@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 [VT_x](http://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) is a virtualization technology that comes in handy for example in case you want to run [VirtualBox](https://www.virtualbox.org/).
 
 1. commands described here need to be executed in a ``crosh`` root shell (use ``sudo su`` to become root)

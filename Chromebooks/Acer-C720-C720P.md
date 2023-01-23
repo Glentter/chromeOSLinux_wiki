@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 This page collects the most relevant tips and tricks for using crouton on an Acer C720/C720P.  Specifically these tips were from setting up crouton with xubuntu and saucy, but they should apply to a wide variety of installs on this hardware.  Most of these came from the reddit thread "List of fixes for Xubuntu 13.10 on the Acer C720", which is focussed towards a complete OS replacement, not a side-by-side install like you have with crouton.  As a result, many of the tips aren't necessary, and some outright will not work.
 
 ### Touchpad

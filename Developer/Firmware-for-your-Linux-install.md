@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 The below instructions carry a  downside: you may be replacing a distro's firmware with older versions. In most cases, all you need is 2 files from the Chromebook, without which the mic of your internal soundcard simply will not work correctly. This is specific to each Chromebook, so I can only show you an example for an Acer Chromebook 11 C740:
 
 From the shell, `cd /etc/modprobe.d` then `ls -l`. I find a file called alsa-auron_paine.conf. After executing `cat alsa-auron_pain.conf`, I see this:

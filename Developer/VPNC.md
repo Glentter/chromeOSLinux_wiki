@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 # VPNC
 
 Chromium OS has VPN support built-in, but connecting to some VPNs requires client features and configurations that are not available. For those networks, it is possible to establish a VPN connection from a chroot that is usable from both within the chroot and Chromium OS.

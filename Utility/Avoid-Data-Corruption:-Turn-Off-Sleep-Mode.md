@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 The below (which I wrote while still learning about crouton) is way overblown. All in the world you need to do is change your power settings so the Chromebook doesn't sleep when it's inactive & the power's turned on. Be sure this setting's in place before creating or updating a chroot. If you wish the screen to turn off, that's fine. Just don't let it sleep. Always be sure the unit is plugged in before creating or updating a chroot.
 
 

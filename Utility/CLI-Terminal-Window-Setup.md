@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 This doc is about how to set up a customizable terminal window that doesn't have to run inside a Chrome tab. It is a guide using several Chrome extensions in tandem to create an authentic terminal app running inside Chrome OS. It assumes that you have a CLI installation of Crouton, and you wish to run it alongside the Chrome browser. There are many bits and pieces, but I found a very useful setup for my CLI Crouton chroot that I thought worth sharing with others. It serves as a good complement to the doc [CLI Development Environment](https://github.com/dnschneid/crouton/wiki/CLI-Development-Environment), which focuses on implementing [Caret](https://chrome.google.com/webstore/detail/caret/fljalecfjciodhpcledpamjachpmelml) as a text editor.
 
 ![Crouton CLI running in Terminal window](https://github.com/brentirwin/images/blob/master/image.png?raw=true)

@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 LXDE works best with the trusty release. I will assume you are using -r trusty -t lxde, and will try to offer alternatives when possible. LXDE is lean but powerful, yet some files need to be edited manually. Make the following tweaks, then exit and restart your chroot for the changes to take effect.
 
 1. Double-Click Speed: create the file `.gtkrc-2.0` in your home folder. It should contain the single line:  

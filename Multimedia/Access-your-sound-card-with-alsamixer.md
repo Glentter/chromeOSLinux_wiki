@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 There is an article already about disabling CRAS, which I found to be overkill and unnecessary. All in the world you have to do is add your user user name to the hwadudio: entry in /etc/group, then restart your chroot. Nearly all sound packages allow you to choose input and output channels, such as alsa-utils, audacity, guvcview, smplayer, to name just a few. After adding your user name to hwaudio:, restart your chroot, pull up alsamixer, and tweak all available ports and channels. You will see cras, pulse (if installed and enabled), and sound card ports.
 
 When you are satisfied with everything, save your settings with

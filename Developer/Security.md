@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 crouton is not and cannot be as secure as Chromium OS in verified mode.  Here's why:
 
 Chromium OS's security out of the box is extremely good. All code that is natively run is either explicitly vetted by the chain of trust that starts from the embedded controller (the OS and Chrome itself) or permuted such that it cannot escape a narrowly-defined sandbox (NaCl, Pepper plugins, etc). If you have a Chromebook and you're running ChromeOS, it's even better, as the chain of trust starts from the TPM. (This might be a little off on the details, but secure boot is way better documented elsewhere.)

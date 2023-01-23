@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 ## awesome works fine in crouton (added a bash script for this: [[get-crouton-awesome.sh]]):
 * Install xorg: `sudo crouton -t xorg `
 

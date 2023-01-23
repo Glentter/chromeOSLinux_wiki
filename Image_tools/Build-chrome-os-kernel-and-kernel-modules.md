@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 ## General info
 This page will explain how to build your own Chrome OS kernel and kernel modules. We are especially interested in the kernel modules as we can't use a different kernel with crouton.  
 When you build your own kernel modules, you are also able to build the kernel, so it could be of use for chrubuntu users. 

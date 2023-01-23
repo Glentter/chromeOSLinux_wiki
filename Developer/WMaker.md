@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 For the dozens of us (dozens!) who still prefer Window Maker's fast, efficient, and highly stable window manager, it is very easy to quickly install in crouton using x11.
 
 # Using WMaker in crouton 

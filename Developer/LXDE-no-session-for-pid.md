@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 An aggravating message when using the target lxde for most releases. Although I haven't found a fix for this, it is apparently related to any release which uses systemd. After clicking OK (or sometimes Esc), the session seems to work OK.
 
 So here is my suggestion: Install lubuntu 14.04.5. Why? Because it does not use systemd! LXDE works beautifully for this release.

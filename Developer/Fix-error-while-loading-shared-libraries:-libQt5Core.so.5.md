@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 error while loading shared libraries: libQt5Core.so.5: cannot open shared object file: No such file or directory
 ***
 This error appears to occur when running any Qt5-based program in a very current chroot, e.g. Debian Buster. The problem is deeper than I can comprehend, but it has to do with Chromebook's kernel version.

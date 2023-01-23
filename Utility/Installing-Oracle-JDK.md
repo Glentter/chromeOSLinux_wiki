@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 ### Note: For this guide I'll be focusing on ARM Chromebooks and assuming the latest version is jdk1.7.0_60, you may have to update the commands in this guide to match the current version number for the JDK you download. These instructions are based on the intel instructions found on [wikihow](http://www.wikihow.com/Install-Oracle-Java-on-Ubuntu-Linux).
 
 ## Downloading Oracle Java

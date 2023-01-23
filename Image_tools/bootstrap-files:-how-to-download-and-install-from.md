@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 Quit downloading the same releases over and over. Here is a simple example, using 3 different releases:
 
     sudo sh ~/Downloads/crouton -d -f ~/Downloads/trusty.tar.bz2 -r trusty  

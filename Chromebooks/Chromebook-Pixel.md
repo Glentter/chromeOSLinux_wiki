@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 The Pixel is fully supported by crouton with only a few minor caveats you need to keep in mind.
 
 When issuing the command to build your chroot, you will want to add `-t touch` to your command. If you are adding a desktop environment target such as Xfce or Unity, you can combine it with touch via something like `-t touch,xfce`.

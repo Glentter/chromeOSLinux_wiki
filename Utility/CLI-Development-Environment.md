@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 # CLI Development Environment
 This doc is about how to set up a development environment using a chrome app and a compiler inside crouton. This could be changed to use any editor on chromeos that allows external extension messaging on hotkeys or buttons, as well as any kind of compiler or interpreter on the crouton side. For this example, we will be using [Caret](https://chrome.google.com/webstore/detail/caret/fljalecfjciodhpcledpamjachpmelml) as the editor/IDE and gcc as the compiler inside crouton.
 

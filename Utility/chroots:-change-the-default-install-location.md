@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 This cool trick is not covered anywhere. Type in these commands from the shell:  
   
     cd /usr/local  

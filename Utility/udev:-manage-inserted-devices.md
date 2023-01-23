@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 udev performs rule-defined actions as a result of device events. For example, it can change the permissions of device nodes, to allow access to devices as a normal user.
 
 ### Leverage on Chromium OS' udev daemon (recommended)

@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 ChromeOS can run a lot of Chrome processes. If you are working primarily in your crouton chroot, then this can place an excessive load on the system.
 
 I've found that it is possible to kill a lot of these Chrome processes without doing anything damaging (though you will lose any unsaved data on websites in Chrome). These should be the ChromeOS chrome processes: <code>/opt/chrome/chrome/chrome</code>

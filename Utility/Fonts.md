@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 # Install (Powerline) fonts in Chrome OS in dev mode
 
 Suppose you want to install some extra fonts (eg [Powerline fonts](https://github.com/powerline/fonts)) to spice up your Crosh Window (eg for [Zsh + agnoster](https://github.com/agnoster/agnoster-zsh-theme)). You might be surprised that after following a tutorial (even those specific to Chrome OS) that places the fonts in your home directory  `fc-cache -vf` does not pick up your new fonts despite the existence of `/etc/fonts/conf.d/50-user.conf` (and even if you manually specify the directory, you will still run into problems with the powerline symbols).

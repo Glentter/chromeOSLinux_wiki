@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 The intent of this page is to collect notes on using the ChromeOS wayland server from chroots.
 
 ## Xwayland as a full-screen window (tested on xenial, ARM) ##

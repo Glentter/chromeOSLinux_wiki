@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 # Switch languages in crouton (Debian and Ubuntu)
 ## Before you begin
 You will need to find your locale (see examples below). On Debian/Ubuntu, you can find a list of these in `/usr/share/i18n/SUPPORTED`.

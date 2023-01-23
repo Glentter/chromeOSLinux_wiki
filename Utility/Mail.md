@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 I installed vanilla Ubuntu, and added latest Thunderbird,
 but did not find way to make it default mail client
 

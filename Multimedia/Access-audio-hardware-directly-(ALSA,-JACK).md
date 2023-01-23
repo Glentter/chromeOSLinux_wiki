@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 For most use cases, audio works just fine with CRAS; `ALSA to CRAS` is supported out of the box by crouton, and `JACK to CRAS` is the most convenient way to run JACK apps.
 
 However, direct access to hardware may be desired for more latency-sensitive audio applications. The following is a guide on setting up ALSA and JACK access to hardware on a crouton chroot.

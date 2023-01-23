@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 If you install the lxde target in xenial, launching with startlxde yields an annoying error: "No session for pid xxxx" where the x's represent a process-ID. Here are 5 work-arounds:
 
 1. Ignore the error. Wait until you see the black screen, then press Esc to view the error, and press Esc again. Sometimes you may see the error first, and you may have to click OK to continue. If you leave LXDE running most of the time, this could work for you. This is the recommended solution. The error is perfectly harmless. After clearing the error, everything works correctly.

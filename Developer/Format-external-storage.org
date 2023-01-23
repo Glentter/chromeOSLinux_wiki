@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 * No FAT, please.
 
 The file manager in Chrome OS can format external storage, but it uses FAT32, which doesn't support symbolic links and other features that Linux users want in file storage. Here's how to use Crouton CLI to format external storage to ext4.

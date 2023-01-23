@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 This section provides full instructions about rebuilding a kernel, not just changing the boot options. Thanks to juancferrer.
 
 1.Open a shell on your Chrome OS

@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 The Asus C201 is a new, inexpensive, ARM-based chromebook that clocks in at one of the most affordable chromebooks manufactured to date.  As of July 2015, the computer costs $169 on Amazon.com, making it an extremely appealing option for those on a very tight budget.
 
 Being an ARM-based machine, it is prone to significantly more hurdles than its Intel-driven counterparts.  This article is meant to be a repository for out-of-the-box distribution/target combination testing, to give potential buyers an idea of which environments will work and which ones will not.

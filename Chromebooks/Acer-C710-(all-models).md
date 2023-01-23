@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 This page collects the most relevant tips and tricks for using crouton on an Acer C710, and it's many model variations.  Specifically these tips were from setting up crouton with Ubuntu with the Unity Desktop environment on Trusty 14.04, but they should apply to a wide variety of installs on this hardware.  
 
 This page is based off the [C720 page](https://github.com/dnschneid/crouton/wiki/Acer-C720-C720P) and will be slowly updated and corrected over the summer of 2014.

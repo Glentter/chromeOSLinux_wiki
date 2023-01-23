@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 Audio in crouton should work out of the box, with sound control synchronized between Chrome OS and crouton.
 By default, audio is forwarded to Chromium OS Audio Server (CRAS), and you will be able to play audio from both Chromium OS and crouton at the same time, without problem.
 

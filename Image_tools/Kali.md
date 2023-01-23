@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 [Kali](http://www.kali.org/) is a distro for information security folks, so you should be able to figure it out.  Here is some help to get started.
 
 To install, download crouton and open a shell:

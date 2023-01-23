@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 # Basic concepts
 `xiwi` (X11 in a Window) works by creating a window in Chrome and channeling a virtual X11 framebuffer over to it.  While crouton transfers the framebuffer relatively efficiently, there's no GPU acceleration and a fair bit of overhead, so don't expect games or graphics-heavy desktop environments to perform well.  For basic productivity use it works great, though.
 

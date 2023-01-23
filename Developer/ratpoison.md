@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 Ratpoison is a very fast, low resource, lightweight Window Manager with very few or no library dependencies, and no fancy window decorations. It is a nice alternative to i3, awesome, or other tiling window managers, particularly for those using older hardware, such as older netbooks or low resource chromebooks.
 
 It is very easy to install and set up Ratpoison in your chromebook using crouton

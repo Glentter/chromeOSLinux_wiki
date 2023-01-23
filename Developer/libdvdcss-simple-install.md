@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 EDIT: The procedure below no longer works: VideoLan has withdrawn the links! The only way (or at least the easiest way) is to install libdvd-pkg. This works for xenial and stretch; unfortunately, the package is not available in trusty. You can add xenial sources to trusty, pin them at 100, and then execute:
 
 `sudo apt-get install libdvd-pkg/xenial`

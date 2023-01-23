@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 All Chromebooks provide some 3D hardware acceleration in Chrome OS. However, experience with crouton chroot varies depending on the release chosen and the type of hardware.
 
 ### Haswell/Bay Trail-based Chromebooks

@@ -1,3 +1,5 @@
+Mon Jan 23 13:38:16 PST 2023
+Mon Jan 23 13:38:16 PST 2023
 Despite crouton not supporting KVM for Virtualization, it is still a proper platform for using QEMU. It can run with Bart PE and [Rasbian Images](http://www.raspberrypi.org/phpBB3/viewtopic.php?f=29&t=37386), install Windows XP, and new from the labs, Ubuntu Server, regardless of the supporting architecture.
 
 First thing we need is an iso of [Ubuntu Server](http://www.mirrorservice.org/sites/releases.ubuntu.com//raring/ubuntu-13.04-server-amd64.iso), as your standard live Desktop will not cut it.  QEMU and QEMU Launcher would be the supported programs on my end, but feel free to be flexible. Defaults settings will work on QEMU, and should work fine for the Ubuntu Install, so long as you press F4 at the "Install Ubuntu Server" splash screen, then enter and proceed as normal.

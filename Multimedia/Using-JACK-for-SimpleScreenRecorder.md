@@ -1,3 +1,4 @@
+Mon Jan 23 13:38:16 PST 2023
 # Using JACK for SimpleScreenRecorder
 ## Permissions
 Go to `/etc/security/limits.conf` and add these lines:
