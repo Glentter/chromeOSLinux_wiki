@@ -116,27 +116,5 @@
 |   |-- [1.2K Jan 23 13:49]  ./Utility/Screencasting-on-a-Chromebook.md
 |   |-- [ 660 Jan 23 13:49]  ./Utility/Setting-Up-Cron-Job.md
 |   |-- [2.4K Jan 23 13:49]  ./Utility/Sharing-files-and-folders.md
-|   |-- [ 761 Jan 23 13:49]  ./Utility/Shutting-Down-Safely.md
-|   |-- [2.4K Jan 23 13:49]  ./Utility/Upgrade-chroot-release.md
-|   |-- [ 389 Jan 23 13:31]  ./Utility/Word-of-Warning-About-This-Wiki-(Global-Warning-LOL).md
-|   |-- [1.3K Jan 23 13:46]  ./Utility/chroots:-change-the-default-install-location.md
-|   |-- [5.3K Jan 23 13:49]  ./Utility/crouton-in-a-Chromium-OS-window-(xiwi).md
-|   |-- [ 575 Jan 23 13:49]  ./Utility/get-crouton-awesome.sh.md
-|   |-- [3.2K Jan 23 13:49]  ./Utility/i3.md
-|   |-- [202K Jan 23 13:46]  ./Utility/screencasting.png
-|   |-- [2.7K Jan 23 13:49]  ./Utility/udev:-manage-inserted-devices.md
-|   `-- [311K Jan 23 13:49]  ./Utility/util.txt
-|-- [4.0K Jan 23 13:49]  ./issues
-|   `-- [ 11K Jan 23 13:49]  ./issues/broken.md
-|-- [4.0K Jan 23 13:46]  ./smes-images
-|   |-- [ 34K Jan 23 13:46]  ./smes-images/1a.png
-|   |-- [128K Jan 23 13:46]  ./smes-images/1b.png
-|   |-- [ 55K Jan 23 13:46]  ./smes-images/2.png
-|   |-- [ 57K Jan 23 13:46]  ./smes-images/3.png
-|   |-- [ 72K Jan 23 13:46]  ./smes-images/4.png
-|   |-- [116K Jan 23 13:46]  ./smes-images/5.png
-|   `-- [389K Jan 23 13:46]  ./smes-images/6.png
-`-- [   0 Jan 23 14:04]  ./tree.txt
 
-8 directories, 125 files
 ```
